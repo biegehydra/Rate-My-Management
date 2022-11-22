@@ -1,0 +1,14 @@
+﻿* {
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+}
+
+.page-container {
+    display: grid;
+    grid-template-columns: 1fr 8fr 1fr;
+    min-height: 90vh;
+}
+.sides {
+    background: var(--rz-header-background-color);
+}

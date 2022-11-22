@@ -1,0 +1,83 @@
+﻿@using RMM.Data
+@using Microsoft.EntityFrameworkCore.Metadata.Conventions
+@using System.Text.RegularExpressions
+@using RMM.Core
+@inject IMongoService mongoService;
+<RadzenTemplateForm TItem="LocationReview" Data="LocationReview" Style="margin:10px; width: 95%;" Submit="@OnSubmitReview" >
+    <RadzenCard>
+        @if (!_creatingReview)
+        {
+            <RadzenButton Click="@(() => _creatingReview = true)">Create review</RadzenButton>
+        }
+        else
+        {
+            <div class="d-flex">
+                <div class="d-flex flex-column align-items-center">
+                    You Are?
+                    <RadzenRadioButtonList Name="ManagerType" TValue="int" Change="OnRadioChange" >
+                        <Items>
+                            <RadzenRadioButtonListItem Text="Employee" Value="1"/>
+                            <RadzenRadioButtonListItem Text="Customer" Value="2"/>
+                        </Items>
+                    </RadzenRadioButtonList>
+                    <RadzenRequiredValidator Component="ManagerType" Text="Review type is required!" DefaultValue="0" />
+                    <div class="m-1">
+                        <RadzenTextBox Placeholder="Username" @bind-Value="LocationReview.SenderUsername" Name="Username"></RadzenTextBox>
+                        <RadzenRequiredValidator Component="Username" Text="Username is required!" />
+                    </div>
+                    <div class="m-1">
+                        <RadzenRating Name="Rating" @bind-Value="LocationReview.Stars"></RadzenRating>
+                        <RadzenRequiredValidator Component="Rating" Text="Review rating is required!" DefaultValue="0" />
+                    </div>
+                    <div class="m-1">
+                        <RadzenButton ButtonType="ButtonType.Submit">Submit</RadzenButton>
+                    </div>
+                    <div class="m-1">
+                        <RadzenButton Click="@(() => _creatingReview = false)">Cancel</RadzenButton>
+                    </div>
+                </div>
+                <div style="width: -webkit-fill-available; display: flex; flex-direction: column">
+                    <div style="margin-bottom: 10px;">
+                        <RadzenTextBox Name="ManagerName" @bind-Value="LocationReview.ManagerName" Placeholder="Manager Name"></RadzenTextBox>
+                        <RadzenRequiredValidator Component="ManagerName" Text="Manager name is required!" />
+                        <RadzenDropDown TValue="string" Name="ManagerType" SelectedItemChanged="OnSelectionChange" Placeholder="Manager Type" Data="@ManagerTypes"></RadzenDropDown>
+                        <RadzenRequiredValidator Component="ManagerType" Text="Manager type is required!" DefaultValue="@(string.Empty)"/>
+                        <RadzenDropDown Multiple="true" Chips="true" MaxSelectedLabels="20" AllowClear="true" AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" Data=@ManagerAttributes @bind-Value=@multipleAttributes/>
+                    </div>
+                    <RadzenTextArea Name="ReviewContent" @bind-Value="LocationReview.Content" Placeholder="Review" Style="width: -webkit-fill-available; height: -webkit-fill-available"></RadzenTextArea>
+                    <RadzenRequiredValidator   Component="ReviewContent" Text="Review message is required!" />
+                </div>
+            </div>
+        }
+    </RadzenCard>
+</RadzenTemplateForm>
+@code {
+
+    [Parameter]
+    public LocationReview LocationReview { get; set; } = new LocationReview();
+    [Parameter]
+    public string LocationId { get; set; }
+    [Parameter]
+    public EventCallback SubmitCallback { get; set; }
+
+    private IEnumerable<int> multipleAttributes { get; set; }
+
+    private bool _creatingReview;
+
+    private List<string> ManagerTypes = ExtensionMethods.GetEnumNamesCorrected<ManagerType>();
+    private List<string> ManagerAttributes = ExtensionMethods.GetEnumNamesCorrected<ManagerAttributes>();
+    private void OnRadioChange(int args)
+    {
+        LocationReview.Type = args == 1 ? ReviewType.Employee : ReviewType.Customer;
+    }
+    private void OnSelectionChange(object args)
+    {
+        LocationReview.ManagerType = args.ToString().StartsWith("G") ? ManagerType.GeneralManager : ManagerType.HumanResources;
+    }
+    private async Task OnSubmitReview()
+    {
+        await mongoService.AddLocationReviewAsync(LocationId, LocationReview);
+        LocationReview = new LocationReview();
+        await SubmitCallback.InvokeAsync();
+    }
+}

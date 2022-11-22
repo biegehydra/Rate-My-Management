@@ -1,0 +1,34 @@
+﻿@using RateMyManagement.IServices
+@using RateMyManagement.Data
+@inject IImgbbService imgbbService;
+<div class="d-flex flex-column align-items-center align-content-center">
+    @if (test != null)
+    {
+        <img src="@test.data.display_url"/>
+    }
+    <InputFile OnChange="@LoadFiles"></InputFile>
+    <button @onclick="@DeleteImage">Delete Image</button>
+</div>
+@code {
+    [Parameter] 
+    public EventCallback<string> ImageUploaded { get; set; }
+    private string path;
+    private ImgbbUploadResponse test;
+    private async Task LoadFiles(InputFileChangeEventArgs args)
+    {
+        using var mem = new MemoryStream();
+        await args.File.OpenReadStream().CopyToAsync(mem);
+        var result = await imgbbService.UploadImageAsync(mem.ToArray());
+        if (result.success)
+        {
+            test = result;
+        }
+        //(test.data.display_url,test.data.delete_url))
+        await ImageUploaded.InvokeAsync(test.data.display_url + " " + test.data.delete_url);
+    }
+
+    private async Task DeleteImage()
+    {
+        await imgbbService.DeleteImageAsync((test.data.display_url + " " + test.data.delete_url));
+    }
+}

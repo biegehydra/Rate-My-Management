@@ -1,0 +1,85 @@
+﻿@page "/company/location/{Id}"
+@using RMM.Data
+@inject IMongoService mongoService;
+@if (_company != null)
+{
+    <PageTitle>@(_company.Name + " " + _location.City)</PageTitle>
+    <div class="d-flex flex-column align-items-center">
+        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; width: -webkit-fill-available;">
+            <div style="margin: 10px;">
+                <RadzenCard>Overall Rating: @_location.GetRating().ToString("0.00")</RadzenCard>
+                <RadzenChart>
+                    <RadzenColumnSeries Data="@GetData()" CategoryProperty="Stars" ValueProperty="Frequency" Title="Frequency" ></RadzenColumnSeries>
+                    <RadzenCategoryAxis Min="0" Max="5" Step="1" ></RadzenCategoryAxis>
+                    <RadzenValueAxis Step="1" ></RadzenValueAxis>
+                    <RadzenGridLines Visible="true"></RadzenGridLines>
+                    <RadzenLegend Visible="false"></RadzenLegend>
+                </RadzenChart>
+            </div>
+            <div class="d-flex flex-column align-items-center">
+                <img style="height: 10em; width: 10em; border-radius: 50%" src="@_company.GetLogoUrl()"/>
+                <h1>@_company.Name</h1>
+                <h3>@_company.Industry</h3>
+                <p>@_company.Description</p>
+                <p>@_location.City</p>
+                <p>@_location.Address</p>
+            </div>
+        </div>
+        <hr style="width: 100%"/>
+        <LocationReviewForm LocationId="@_location.Id" LocationReview="@(new LocationReview())" SubmitCallback="OnSubmitReview"></LocationReviewForm>
+        @foreach (var review in _location.LocatioReviews)
+        {
+            <LocationReviewComponent LocationReview="@review"></LocationReviewComponent>
+        }
+    </div>
+}
+
+@code {
+    [Parameter]
+    public string Id { get; set; }
+    private Location _location { get; set; }
+    private Company _company { get; set; }
+
+    private DataItem[] GetData()
+    {
+        var result = new DataItem[5];
+        if (_location == null) return result;
+        for (int i = 1; i <= 5; i++)
+        {
+            var data = new DataItem();
+            data.Stars = i;
+            data.Frequency = _location.LocatioReviews.Count(x => x.Stars == i);
+            result[i-1] = data;
+        }
+        return result;
+    }
+    public int _reviewType;
+    private string _reviewContent;
+    private string _reviewUsername;
+    private int _reviewStars;
+    private bool _creatingReview;
+    protected override async Task OnInitializedAsync()
+    {
+        var result = await mongoService.TryGetLocationAsync(Id);
+        if (result.Item1)
+        {
+            _location = result.Item2;
+        }
+        var result2 = await mongoService.TryGetCompanyAsync(_location.CompanyId);
+        if (result2.Item1)
+        {
+            _company = result2.Item2;
+        }
+    }
+    private async Task OnSubmitReview()
+    {
+        await OnInitializedAsync();
+    }
+
+    public class DataItem
+    {
+        public int Stars { get; set; }
+        public int Frequency { get; set; }
+    }
+
+}

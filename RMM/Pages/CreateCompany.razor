@@ -1,0 +1,68 @@
+﻿@page "/create/company/"
+@inject IMongoService companyService;
+@layout MainLayoutWithSides
+<div class="page-container">
+    <form>
+        <div class="d-flex align-items-center">
+            <h2 class="m-2">Name:</h2>
+            <RadzenTextBox @bind-Value="_companyName"></RadzenTextBox>
+        </div>
+        <div class="d-flex align-items-center">
+            <h2 class="m-2">Industry:</h2>
+            <RadzenTextBox @bind-Value="_companyIndustry"></RadzenTextBox>
+        </div>
+        <div class="d-flex align-items-center">
+            <h2 class="m-2">Description:</h2>
+            <RadzenTextArea @bind-Value="_companyDescription"></RadzenTextArea>
+        </div>
+        <div>
+            <AddImage ImageUploaded="((str)=> OnImageUploaded(str))"></AddImage>
+        </div>
+        <div>
+            <button @onclick="CreateCompanyAsync">Submit</button>
+        </div>
+    </form>
+</div>
+@code {
+
+    [Parameter]
+    public string query { get; set; }
+    string _companyName;
+    string _companyIndustry;
+    string _companyDescription;
+    string _companyLogoUrl { get; set; } = string.Empty;
+    string _companyLogoDeleteUrl { get; set; } = string.Empty;
+    public string Test { get; set; }
+    public string Test2;
+    public string Test3;
+    public List<Company> CompaniesQueried { get; set; } = new List<Company>();
+
+    private async Task CreateCompanyAsync()
+    {
+        var company = new Company()
+        {
+            Name = _companyName,
+            Industry = _companyIndustry,
+            LogoDeleteUrl = _companyLogoDeleteUrl,
+            LogoUrl = _companyLogoUrl
+        };
+        await companyService.CreateCompanyAsync(company);
+        ResetForm();
+    }
+
+    private void ResetForm()
+    {
+        _companyName = string.Empty;
+        _companyIndustry = string.Empty;
+        _companyLogoDeleteUrl = string.Empty;
+        _companyLogoUrl = string.Empty;
+    }
+
+    public async Task OnImageUploaded(string info)
+    {
+        _companyLogoUrl = info.Split(" ")[0];
+        _companyLogoDeleteUrl = info.Split(" ")[1];
+    }
+
+
+}
