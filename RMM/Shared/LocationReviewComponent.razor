@@ -1,9 +1,10 @@
 ﻿@using RMM.Data
+@using RMM.Core
 <RadzenCard Style="padding: 10px 10px; margin:10px; width: 95%;">
     <div class="position-relative d-flex flex-row w-100">
         <div style=" border-right: 1px solid black; padding-right: 10px; display: flex; flex-direction: column; align-items: center; width:15%">
-            <RadzenText >Position: @LocationReview.ManagerType</RadzenText>
-            <RadzenText >Manager: @LocationReview.ManagerName</RadzenText>
+            <RadzenText Style="display: flex; flex-direction: column; align-items: center;">Position: <span style="white-space: nowrap">@LocationReview.ManagerType.ToStringCorrected()</span></RadzenText>
+            <RadzenText Style="display: flex; flex-direction: column; align-items: center;">Manager: @LocationReview.ManagerName</RadzenText>
             <h1><b>@LocationReview.Stars</b></h1>
         </div>
         <div style="padding-left: 10px; width: 100%;">
@@ -11,7 +12,15 @@
                 <p style="padding-right: 10px;"><b>@(LocationReview.SenderUsername)</b></p>
                 <p style="font-size: .8em; align-self: center;">@LocationReview.SentDateAndTime</p>
             </div>
-            <RadzenContent>@LocationReview.Content</RadzenContent>
+            <hr style="height: 2px; color: black" />
+            <RadzenContent Style="padding: 0;">@LocationReview.Content</RadzenContent>
+            <hr style="height: 2px; color: black"/>
+            <div style="display: flex">
+                @foreach (var attribut in LocationReview.ManagerAttributes)
+                {
+                    <RadzenChip>@attribut.ToStringCorrected()</RadzenChip>
+                }
+            </div>
         </div>
     </div>
 </RadzenCard>

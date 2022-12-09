@@ -8,15 +8,21 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="Pages\PageNotFound.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove="Pages\CompanyPage.razor.css" />
     <None Remove="Shared\CompanySearch.razor.css" />
     <None Remove="Shared\MainLayoutWithSides.razor.css" />
+    <None Remove="Shared\RadzenChip.razor.css" />
   </ItemGroup>
 
   <ItemGroup>
     <Content Include="Pages\CompanyPage.razor.css" />
     <Content Include="Shared\CompanySearch.razor.css" />
     <Content Include="Shared\MainLayoutWithSides.razor.css" />
+    <Content Include="Shared\RadzenChip.razor.css" />
   </ItemGroup>
 
   <ItemGroup>
@@ -25,9 +31,26 @@
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="6.0.10" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.10" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.10" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.10" />
     <PackageReference Include="MongoDB.Driver" Version="2.18.0" />
     <PackageReference Include="Radzen.Blazor" Version="4.3.6" />
     <PackageReference Include="Selenium.WebDriver" Version="4.6.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <UpToDateCheckInput Remove="Pages\PageNotFound.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="Pages\PageNotFound.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Pages\PageNotFound.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Areas\Identity\Data\" />
   </ItemGroup>
 
 </Project>

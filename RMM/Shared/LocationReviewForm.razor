@@ -14,7 +14,7 @@
             <div class="d-flex">
                 <div class="d-flex flex-column align-items-center">
                     You Are?
-                    <RadzenRadioButtonList Name="ManagerType" TValue="int" Change="OnRadioChange" >
+                    <RadzenRadioButtonList Name="ManagerType" TValue="int" Change="OnReviewTypeChange" >
                         <Items>
                             <RadzenRadioButtonListItem Text="Employee" Value="1"/>
                             <RadzenRadioButtonListItem Text="Customer" Value="2"/>
@@ -37,12 +37,12 @@
                     </div>
                 </div>
                 <div style="width: -webkit-fill-available; display: flex; flex-direction: column">
-                    <div style="margin-bottom: 10px;">
+                    <div style="margin-bottom: 10px; display: flex;">
                         <RadzenTextBox Name="ManagerName" @bind-Value="LocationReview.ManagerName" Placeholder="Manager Name"></RadzenTextBox>
                         <RadzenRequiredValidator Component="ManagerName" Text="Manager name is required!" />
-                        <RadzenDropDown TValue="string" Name="ManagerType" SelectedItemChanged="OnSelectionChange" Placeholder="Manager Type" Data="@ManagerTypes"></RadzenDropDown>
+                        <RadzenDropDown TValue="string" Name="ManagerType" SelectedItemChanged="OnManagerTypeSelectionChange" Placeholder="Manager Type" Data="@ManagerTypes"></RadzenDropDown>
                         <RadzenRequiredValidator Component="ManagerType" Text="Manager type is required!" DefaultValue="@(string.Empty)"/>
-                        <RadzenDropDown Multiple="true" Chips="true" MaxSelectedLabels="20" AllowClear="true" AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" Data=@ManagerAttributes @bind-Value=@multipleAttributes/>
+                        <RadzenDropDown Multiple="true" Chips="true" MaxSelectedLabels="20" AllowClear="true" AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" Data=@ManagerAttributes @bind-Value="MultipleAttributes"/>
                     </div>
                     <RadzenTextArea Name="ReviewContent" @bind-Value="LocationReview.Content" Placeholder="Review" Style="width: -webkit-fill-available; height: -webkit-fill-available"></RadzenTextArea>
                     <RadzenRequiredValidator   Component="ReviewContent" Text="Review message is required!" />
@@ -53,26 +53,45 @@
 </RadzenTemplateForm>
 @code {
 
-    [Parameter]
-    public LocationReview LocationReview { get; set; } = new LocationReview();
-    [Parameter]
-    public string LocationId { get; set; }
-    [Parameter]
-    public EventCallback SubmitCallback { get; set; }
+    [Parameter] public LocationReview LocationReview { get; set; } = new LocationReview();
+    [Parameter] public string LocationId { get; set; }
+    [Parameter] public EventCallback SubmitCallback { get; set; }
+    private IEnumerable<string> _multiplateAttributes;
 
-    private IEnumerable<int> multipleAttributes { get; set; }
-
-    private bool _creatingReview;
-
+    public IEnumerable<string> MultipleAttributes
+    {
+        get { return _multiplateAttributes; }
+        set
+        {
+            _multiplateAttributes = value;
+            List<ManagerAttribute> temp = new List<ManagerAttribute>();
+            foreach (var str in value)
+            {
+                ManagerAttribute val;
+                if (str.MatchesEnumItem(out val))
+                {
+                    temp.Add(val);
+                }
+            }
+            LocationReview.ManagerAttributes = temp;
+        }
+    }
     private List<string> ManagerTypes = ExtensionMethods.GetEnumNamesCorrected<ManagerType>();
-    private List<string> ManagerAttributes = ExtensionMethods.GetEnumNamesCorrected<ManagerAttributes>();
-    private void OnRadioChange(int args)
+    private List<string> ManagerAttributes = ExtensionMethods.GetEnumNamesCorrected<ManagerAttribute>();
+    private bool _creatingReview;
+    private void OnReviewTypeChange(int args)
     {
         LocationReview.Type = args == 1 ? ReviewType.Employee : ReviewType.Customer;
     }
-    private void OnSelectionChange(object args)
+    private void OnManagerTypeSelectionChange(object args)
     {
-        LocationReview.ManagerType = args.ToString().StartsWith("G") ? ManagerType.GeneralManager : ManagerType.HumanResources;
+        var asString = args.ToString();
+        ManagerType managerType;
+        if (asString.MatchesEnumItem(out managerType))
+        {
+            LocationReview.ManagerType = managerType;
+        }
+
     }
     private async Task OnSubmitReview()
     {

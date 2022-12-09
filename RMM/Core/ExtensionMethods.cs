@@ -20,5 +20,26 @@ namespace RMM.Core
             }
             return correctedNames;
         }
+        public static string ToStringCorrected(this Enum enumType)
+        {
+            var regex = new Regex(@"([A-Z][a-z]+)");
+            var words = regex.Split(enumType.ToString());
+            return string.Join(" ", words);
+        }
+        public static bool MatchesEnumItem<TEnum>(this string str, out TEnum value) where TEnum :  struct, Enum
+        {
+            value = default;
+            var words = str.Split(' ');
+            var wordString = String.Join("", words);
+
+            if (Enum.TryParse(wordString,true, out TEnum result))
+            {
+                var lowercaseResult = result.ToString().ToLowerInvariant();
+                value = result;
+                return true;
+            }
+
+            return false;
+        }
     }
 }

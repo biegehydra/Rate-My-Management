@@ -18,6 +18,7 @@ namespace RMM.Data
     {
         public ReviewType Type { get; set; }
         public ManagerType ManagerType;
+        public List<ManagerAttribute> ManagerAttributes { get; set; } = new ();
         public string ManagerName { get; set; }
     }
     public enum ReviewType
@@ -33,7 +34,7 @@ namespace RMM.Data
         HumanResources,
         GeneralManager
     }
-    public enum ManagerAttributes
+    public enum ManagerAttribute
     {
         Null,
         Rude,

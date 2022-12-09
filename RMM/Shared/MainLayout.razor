@@ -1,10 +1,14 @@
-﻿@inherits LayoutComponentBase
+﻿@using Microsoft.AspNetCore.Identity
+@using RMM.Data
+@inherits LayoutComponentBase
 @inject NavigationManager navManager;
+@inject UserManager<ApplicationUser> userManager
+@inject RoleManager<IdentityRole> _roleManager
 <PageTitle>RMM</PageTitle>
 
 <div class="page">
     <main>
-        <div class="top-row auth">
+        <div class="top-row">
             <div>
                 <h1 style="cursor: pointer" @onclick="@(()=>navManager.NavigateTo("/"))">Rate My Management</h1>
                 <RadzenMenu>
@@ -14,8 +18,9 @@
                     </RadzenMenuItem>
                 </RadzenMenu>
                 <CompanySearch></CompanySearch>
+                <button @onclick="OnClick">Do stuff</button>
             </div>
-            <div>
+            <div style="display: flex; align-items: center;">
                 <LoginDisplay/>
                 <a href="https://docs.microsoft.com/aspnet/" target="_blank">About</a>
             </div>
@@ -29,4 +34,13 @@
 @code
 {
     private bool _searchingForCompany;
+
+    private async Task OnClick()
+    {
+        var user = await userManager.FindByEmailAsync("admin@gmail.com");
+        if (user != null)
+        {
+            await userManager.AddToRoleAsync(user, "Administrator");
+        }
+    }
 }
