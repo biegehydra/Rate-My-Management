@@ -1,6 +1,5 @@
 ﻿@page "/company/location/{Id}"
-@using RMM.Data
-@inject IMongoService mongoService;
+@inject IMongoService mongoService
 @if (_company != null)
 {
     <PageTitle>@(_company.Name + " " + _location.City)</PageTitle>
@@ -18,11 +17,27 @@
             </div>
             <div class="d-flex flex-column align-items-center">
                 <img style="height: 10em; width: 10em; border-radius: 50%" src="@_company.GetLogoUrl()"/>
-                <h1>@_company.Name</h1>
-                <h3>@_company.Industry</h3>
-                <p>@_company.Description</p>
-                <p>@_location.City</p>
-                <p>@_location.Address</p>
+                @if (!_editing)
+                {
+                    <h1>@_company.Name</h1>
+                    <h3>@_company.Industry</h3>
+                    <p>@_company.Description</p>
+                    <p>@_location.City</p>
+                    <p>@_location.Address</p>
+                }
+                else
+                {
+                    <RadzenTextBox Style="font-size: calc(1.375rem); cursor:pointer;" Placeholder="@_company.Name">Hello</RadzenTextBox>
+                    <RadzenTextBox Style="font-size: calc(1.2rem);" Placeholder="@_company.Industry">Hello</RadzenTextBox>
+                }
+            </div>
+            <div>
+                <ManagerDiv>
+                    <div>
+                        <img @onclick="@(() => _editing = !_editing)"
+                             style="height: 2em; width: 2em; background: white; cursor: pointer; margin: 10px" src="@(_editing ? @"\Images\Icons\Cancel.png)" : @"\Images\Icons\Edit.png")">
+                    </div>
+                </ManagerDiv>
             </div>
         </div>
         <hr style="width: 100%"/>
@@ -39,6 +54,7 @@
     public string Id { get; set; }
     private Location _location { get; set; }
     private Company _company { get; set; }
+    private bool _editing;
 
     private DataItem[] GetData()
     {
@@ -75,7 +91,9 @@
     {
         await OnInitializedAsync();
     }
-
+    public void ToggleEditing()
+    {
+    }
     public class DataItem
     {
         public int Stars { get; set; }
