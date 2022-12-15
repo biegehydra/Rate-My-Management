@@ -22,7 +22,6 @@
   <ItemGroup>
     <Content Include="Pages\CompanyPage.razor.css" />
     <Content Include="Shared\CompanySearch.razor.css" />
-    <Content Include="Shared\MainLayoutWithSides.razor.css" />
     <Content Include="Shared\RadzenChip.razor.css" />
   </ItemGroup>
 

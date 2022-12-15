@@ -21,8 +21,8 @@
     border-right: 1px solid black;
 }
 img {
-    height: 10em !important;
-    width: 10em !important;
+    height: 10em;
+    width: 10em;
     border-radius: 50%;
 }
 hr {

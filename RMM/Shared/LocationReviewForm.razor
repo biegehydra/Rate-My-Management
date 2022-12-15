@@ -2,12 +2,21 @@
 @using Microsoft.EntityFrameworkCore.Metadata.Conventions
 @using System.Text.RegularExpressions
 @using RMM.Core
+@using System.Security.Claims
 @inject IMongoService mongoService;
+@inject AuthenticationStateProvider authenticationStateProvider
 <RadzenTemplateForm TItem="LocationReview" Data="LocationReview" Style="margin:10px; width: 95%;" Submit="@OnSubmitReview" >
     <RadzenCard>
         @if (!_creatingReview)
         {
-            <RadzenButton Click="@(() => _creatingReview = true)">Create review</RadzenButton>
+            <AuthorizeView Context="context2" Policy="@PolicyTypes.AuthorizedUser.ToString()">
+                <Authorized>
+                    <RadzenButton Click="@(() => _creatingReview = true)">Create review</RadzenButton>
+                </Authorized>
+                <NotAuthorized>
+                    <RadzenButton Disabled="true">Create review</RadzenButton>
+                </NotAuthorized>
+            </AuthorizeView>
         }
         else
         {
@@ -22,8 +31,7 @@
                     </RadzenRadioButtonList>
                     <RadzenRequiredValidator Component="ManagerType" Text="Review type is required!" DefaultValue="0" />
                     <div class="m-1">
-                        <RadzenTextBox Placeholder="Username" @bind-Value="LocationReview.SenderUsername" Name="Username"></RadzenTextBox>
-                        <RadzenRequiredValidator Component="Username" Text="Username is required!" />
+                        <RadzenTextBox Disabled="true" Value="@_claimsPrincipal.Identity.Name"></RadzenTextBox>
                     </div>
                     <div class="m-1">
                         <RadzenRating Name="Rating" @bind-Value="LocationReview.Stars"></RadzenRating>
@@ -76,9 +84,16 @@
             LocationReview.ManagerAttributes = temp;
         }
     }
+
+    private bool _creatingReview;
     private List<string> ManagerTypes = ExtensionMethods.GetEnumNamesCorrected<ManagerType>();
     private List<string> ManagerAttributes = ExtensionMethods.GetEnumNamesCorrected<ManagerAttribute>();
-    private bool _creatingReview;
+    private ClaimsPrincipal _claimsPrincipal;
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await authenticationStateProvider.GetAuthenticationStateAsync();
+        _claimsPrincipal = authState.User;
+    }
     private void OnReviewTypeChange(int args)
     {
         LocationReview.Type = args == 1 ? ReviewType.Employee : ReviewType.Customer;
@@ -97,6 +112,8 @@
     {
         await mongoService.AddLocationReviewAsync(LocationId, LocationReview);
         LocationReview = new LocationReview();
+        MultipleAttributes = new List<string>();
+        _creatingReview = false;
         await SubmitCallback.InvokeAsync();
     }
 }

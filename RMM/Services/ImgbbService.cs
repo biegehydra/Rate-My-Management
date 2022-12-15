@@ -13,12 +13,11 @@ namespace RateMyManagement.Services
     {
         private IWebDriver webDriver;
         private readonly string _clientKey;
-        private HttpClient _httpClient;
+        private static readonly HttpClient _httpClient = new HttpClient();
 
         public ImgbbService()
         {
-            _clientKey = "02dd24213a5fc89b91a24ef4a625fbde";
-            _httpClient = new HttpClient();
+            _clientKey = "9efe730b72a119a8eca807331cc4bc0b";
         }
 
         public async Task<ImgbbUploadResponse> UploadImageAsync(byte[] imageArray)
@@ -52,6 +51,7 @@ namespace RateMyManagement.Services
             {
                 IWebElement deleteButton = webDriver.FindElement(By.ClassName("link--delete"));
                 deleteButton.Click();
+                await Task.Delay(5);
                 IWebElement confirmDelete = webDriver.FindElement(By.ClassName("btn-container"))
                     .FindElement(By.ClassName("btn-input"));
                 confirmDelete.Click();
@@ -63,6 +63,7 @@ namespace RateMyManagement.Services
             finally
             {
                 webDriver.Quit();
+                webDriver.Dispose();
             }
         }
     }

@@ -18,11 +18,6 @@ namespace RMM.Data
                 {
                     Name = "Administrator",
                     NormalizedName = "ADMINISTRATOR"
-                },
-                new IdentityRole
-                {
-                    Name = "Manager",
-                    NormalizedName = "MANAGER"
                 }
             );
         }

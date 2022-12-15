@@ -16,7 +16,7 @@
             <RadzenTextArea @bind-Value="_companyDescription"></RadzenTextArea>
         </div>
         <div>
-            <AddImage ImageUploaded="((str)=> OnImageUploaded(str))"></AddImage>
+            <AddImage ImageUploaded="OnImageUploaded"></AddImage>
         </div>
         <div>
             <button @onclick="CreateCompanyAsync">Submit</button>
@@ -32,22 +32,27 @@
     string _companyDescription;
     string _companyLogoUrl { get; set; } = string.Empty;
     string _companyLogoDeleteUrl { get; set; } = string.Empty;
-    public string Test { get; set; }
-    public string Test2;
-    public string Test3;
     public List<Company> CompaniesQueried { get; set; } = new List<Company>();
 
     private async Task CreateCompanyAsync()
     {
-        var company = new Company()
+        try
         {
-            Name = _companyName,
-            Industry = _companyIndustry,
-            LogoDeleteUrl = _companyLogoDeleteUrl,
-            LogoUrl = _companyLogoUrl
-        };
-        await companyService.CreateCompanyAsync(company);
-        ResetForm();
+            var company = new Company()
+            {
+                Name = _companyName,
+                Industry = _companyIndustry,
+                Description = _companyDescription,
+                LogoDeleteUrl = _companyLogoDeleteUrl,
+                LogoUrl = _companyLogoUrl
+            };
+            await companyService.CreateCompanyAsync(company);
+            ResetForm();
+        }
+        catch (Exception e)
+        {
+            var test = e;
+        }
     }
 
     private void ResetForm()
@@ -58,10 +63,10 @@
         _companyLogoUrl = string.Empty;
     }
 
-    public async Task OnImageUploaded(string info)
+    public void OnImageUploaded(ImgbbUploadResponse info)
     {
-        _companyLogoUrl = info.Split(" ")[0];
-        _companyLogoDeleteUrl = info.Split(" ")[1];
+        _companyLogoUrl = info.data.display_url;
+        _companyLogoDeleteUrl = info.data.delete_url;
     }
 
 

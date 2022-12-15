@@ -1,13 +1,17 @@
+using System.Drawing.Text;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI;
 using Microsoft.EntityFrameworkCore;
+using RateMyManagement.Data;
 using RateMyManagement.IServices;
 using RateMyManagement.Services;
 using RMM.Areas.Identity;
 using RMM.Data;
+using RMM.Data.EntityFramework;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,24 +24,14 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
-builder.Services.AddAuthorizationCore(options =>
-{
-    options.AddPolicy("Admin", policy =>
-    {
-        policy.RequireAuthenticatedUser();
-        policy.RequireRole("Administrator");
-    });
-    options.AddPolicy("Manager", policy =>
-    {
-        policy.RequireAuthenticatedUser();
-        policy.RequireRole(new string[] {"Administrator", "Manager"});
-    });
-});
+builder.Services.AddAuthorizationCore(AuthorizationOptionsConfigurer.Configure);
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<ApplicationUser>>();
 builder.Services.AddSingleton<IMongoService>(x => new MongoService("RMM", "Company"));
 builder.Services.AddSingleton<IImgbbService, ImgbbService>();
+builder.Services.AddSingleton<IAuthorizationHandler, LocationManagerHandler>();
+builder.Services.AddSingleton<IAuthorizationHandler, CompanyManagerHandler>();
 
 var app = builder.Build();
 

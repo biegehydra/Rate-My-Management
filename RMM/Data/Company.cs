@@ -16,7 +16,6 @@ namespace RateMyManagement.Data
         public string LogoUrl { get; set; }
         public string LogoDeleteUrl { get; set; }
         public List<string> LocationIds { get; set; } = new List<string>();
-        public List<Review> CompanyReviews { get; set; } = new List<Review>();
         public string GetLogoUrl()
         {
             return string.IsNullOrWhiteSpace(LogoUrl) ? DefaultUrl : LogoUrl;

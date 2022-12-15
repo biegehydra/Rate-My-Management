@@ -9,7 +9,6 @@ namespace RateMyManagement.Data
         [BsonRepresentation(BsonType.ObjectId)]
         public string Id { get; set; } = ObjectId.GenerateNewId().ToString();
         public string CompanyId { get; set; }
-        public string CompanyName { get; set; }
         public string City { get; set; }
         public string Address { get; set; }
 

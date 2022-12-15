@@ -1,84 +1,90 @@
 ﻿@page "/company/{CompanyId}"
-@using RMM.Data
+@using System.Security.Claims
 @layout MainLayoutWithSides
 @inject IMongoService mongoService;
 @inject NavigationManager navManager;
+@inject UserManager<ApplicationUser> userManager
 @if (_company != null)
 {
     <PageTitle>@_company.Name</PageTitle>
     <div class="flex-down page-container">
-        <img src="@_company.GetLogoUrl()"/>
-        <h1>@_company.Name</h1>
-        <h3>@_company.Industry</h3>
-        <p>@_company.Description</p>
-        <hr/>
-        <div class="locations-ratings">
-            <div class="flex-down ratings">
-                <h2>Company Rating</h2>
-                <h1>
-                    @_company.Rating
-                </h1>
-                @if (!_creatingReview)
+        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; width: 100%; padding: 15px;">
+            <div></div>
+            <div style="display: flex; flex-direction: column; align-items: center;">
+                @if (!_editing)
                 {
-                    <RadzenButton Click="@(() => _creatingReview = true)">Create review</RadzenButton>
+                    <img src="@_company.GetLogoUrl()"/>
+                    <h1>@_company.Name</h1>
+                    <h3>@_company.Industry</h3>
+                    <p>@_company.Description</p>
                 }
                 else
                 {
-                    <div class="m-1">
-                        <RadzenTextArea @bind-Value="_reviewContent" Placeholder="Review"></RadzenTextArea>
-                    </div>
-                    <div class="m-1">
-                        <RadzenTextBox Placeholder="Sendername" @bind-Value="_reviewUsername"></RadzenTextBox>
-                    </div>
-                    <div class="m-1">
-                        <RadzenRating Change="@(OnRatingChange)"></RadzenRating>
-                    </div>
-                    <div class="m-1">
-                        <RadzenButton Click="OnSubmitReview">Submit</RadzenButton>
-                    </div>
-                    <div class="m-1">
-                        <RadzenButton Click="@(() => _creatingReview = false)">Cancel</RadzenButton>
-                    </div>
-                }
-                @foreach (var review in _company.CompanyReviews)
-                {
-                    <RadzenCard Style="padding: 0px 10px; margin:10px; width: 95%;">
-                        <div class="review">
-                            <p>@review.SenderUsername</p>
-                            <h1>@review.Stars</h1>
-                            <p class="text">@review.Content</p>
-                            <p class="review-date">@review.SentDateAndTime</p>
-                        </div>
-                    </RadzenCard>
+                    <RadzenTemplateForm Style="display: flex; flex-direction: column; align-items: center" TItem="Company" Data="_company">
+                        <RadzenText>Update Image</RadzenText>
+                        <AddImage  @ref="_addImage" ImageUploaded="@OnImageUploaded"></AddImage>
+                        <RadzenTextBox Placeholder="Name" Style="font-size: 1rem;" @bind-Value="_company.Name"></RadzenTextBox>
+                        <RadzenTextBox Style="font-size: 1rem; margin-top: 0.5rem;" Placeholder="Industry" @bind-Value="_company.Industry" ></RadzenTextBox>
+                        <RadzenTextBox Style="font-size: 1rem; margin-top: 0.5rem;" Placeholder="Description" @bind-Value="_company.Description" ></RadzenTextBox>
+                        <RadzenButton Style="margin-top: 1rem;" Click="@(()=>OnCompanyChangesSaved(_company))">Save Changes</RadzenButton>
+                    </RadzenTemplateForm>
                 }
             </div>
+            <div>
+                <AuthorizeView Policy="@PolicyTypes.CompanyManager.ToString()" Resource="_company">
+                    <div style="display: flex; justify-content: end">
+                        @if (_editing)
+                        {
+                            <img @onclick="@OnStopEditing"
+                         style="height: 2em; width: 2em; background: white; cursor: pointer; margin: 10px" src="\Images\Icons\Cancel.png">
+                        }
+                        else
+                        {
+                            <img @onclick="@OnBeginEditing"
+                         style="height: 2em; width: 2em; background: white; cursor: pointer; margin: 10px" src="\Images\Icons\Edit.png">
+                        }
+                    </div>
+                </AuthorizeView>
+            </div>
+        </div>
+        <hr/>
+        <div class="locations-ratings" style="display: flex; flex-direction: column; align-items: center; padding: 10px;">
             <div class="flex-down locations">
                 <h2>
                     Locations
                 </h2>
-                <RadzenText>Missing Location?</RadzenText>
-                @if (!_creatingLocation)
+                <AuthorizeView Policy="@PolicyTypes.CompanyManager.ToString()" Resource="_company">
+                    <Authorized>
+                        <RadzenText>Missing Location?</RadzenText>
+                        @if (!_creatingLocation)
+                        {
+                            <RadzenButton Click="@(() => _creatingLocation = true)">Create location</RadzenButton>
+                        }
+                        else
+                        {
+                            <div class="m-1">
+                                <RadzenTextBox @bind-Value="_locationAddress" Placeholder="Address"></RadzenTextBox>
+                            </div>
+                            <div class="m-1">
+                                <RadzenTextBox Placeholder="City" @bind-Value="_locationCity"></RadzenTextBox>
+                            </div>
+                            <div class="m-1">
+                                <RadzenButton Click="OnSubmitLocation">Submit</RadzenButton>
+                            </div>
+                            <div class="m-1">
+                                <RadzenButton Click="@(() => _creatingLocation = false)">Cancel</RadzenButton>
+                            </div>
+                        }
+                    </Authorized>
+                </AuthorizeView>
+                <div>
+                    <RadzenTextBox Placeholder="Address" Style="margin-top: 10px;" @bind-Value="Query" ></RadzenTextBox>
+                    <RadzenButton>Search</RadzenButton>
+
+                </div>
+                @foreach (var location in _queriedLocations)
                 {
-                    <RadzenButton Click="@(() => _creatingLocation = true)">Create location</RadzenButton>
-                }
-                else
-                {
-                    <div class="m-1">
-                        <RadzenTextBox @bind-Value="_locationAddress" Placeholder="Address"></RadzenTextBox>
-                    </div>
-                    <div class="m-1">
-                        <RadzenTextBox Placeholder="City" @bind-Value="_locationCity"></RadzenTextBox>
-                    </div>
-                    <div class="m-1">
-                        <RadzenButton Click="OnSubmitLocation">Submit</RadzenButton>
-                    </div>
-                    <div class="m-1">
-                        <RadzenButton Click="@(() => _creatingLocation = false)">Cancel</RadzenButton>
-                    </div>
-                }
-                @foreach (var location in _companyLocations)
-                {
-                    <RadzenCard Style="padding: 0px 10px; margin:10px; width: 95%; cursor: pointer;" @onclick="@(()=>Navaway(location.Id))">
+                    <RadzenCard Style="padding: 0px 10px; margin: 10px; width: 95%; cursor: pointer;" @onclick="@(() => Navaway(location.Id))">
                         <div class="review">
                             <p>@location.Address</p>
                             <p>@location.City</p>
@@ -96,12 +102,27 @@
     public string CompanyId { get; set; }
     private Company _company;
     private List<Location> _companyLocations = new List<Location>();
-    private bool _creatingReview;
+    private List<Location> _queriedLocations = new List<Location>();
     private bool _creatingLocation;
+    private bool _editing { get; set; }
 
-    private string _reviewContent;
-    private string _reviewUsername;
-    private int _reviewStars;
+    private AddImage? _addImage;
+
+    private string _query = string.Empty;
+
+    public string Query
+    {
+        get { return _query; }
+        set
+        {
+            _query = value;
+            _queriedLocations = _companyLocations.Where(x => x.Address.Contains(_query) || x.City.Contains(_query) ).ToList();
+            if (string.IsNullOrWhiteSpace(_query))
+            {
+                _queriedLocations = _companyLocations;
+            }
+        }
+    }
 
     private string _locationAddress;
     private string _locationCity;
@@ -109,6 +130,7 @@
     {
         await GetCompanyAsync();
         await GetCompanyLocationsAsync();
+        _queriedLocations = _companyLocations;
     }
     private async Task GetCompanyAsync()
     {
@@ -131,37 +153,12 @@
             }
         }
     }
-    private void OnRatingChange(int value)
-    {
-        _reviewStars = value;
-    }
-    private async Task OnSubmitReview()
-    {
-        if (string.IsNullOrWhiteSpace(_reviewUsername) || string.IsNullOrWhiteSpace(_reviewContent)) return;
-        var review = new Review()
-        {
-            SenderUsername = _reviewUsername,
-            Content = _reviewContent, 
-            Stars = _reviewStars
-        };
-        await mongoService.AddCompanyReviewAsync(_company.Id, review);
-        await GetCompanyAsync();
-        ResetReview();
-    }
-    private void ResetReview()
-    {
-        _reviewContent = string.Empty;
-        _reviewUsername = string.Empty;
-        _reviewStars = 0;
-        _creatingReview = false;
-    }
     private async Task OnSubmitLocation()
     {
         if (string.IsNullOrWhiteSpace(_locationAddress) || string.IsNullOrWhiteSpace(_locationCity)) return;
         var location = new Location()
         {
-            CompanyId = _company.Id, 
-            CompanyName = _company.Name, 
+            CompanyId = _company.Id,
             Address = _locationAddress, 
             City = _locationCity
         };
@@ -176,11 +173,32 @@
         _locationCity = string.Empty;
         _creatingLocation = false;
     }
-
     private void Navaway(string id)
     {
         var navto = $"/company/location/{id}";
         navManager.NavigateTo(navto);
+    }
+    private async Task OnCompanyChangesSaved(Company company)
+    {
+        await mongoService.UpdateCompanyDetailsAsync(company.Id, company.Name, company.Industry, company.Description);
+        _editing = !_editing;
+        await _addImage.Reset(false);
+    }
+    private async Task OnBeginEditing()
+    {
+        _editing = !_editing;
+        await Task.Delay(2);
+        _addImage.SetImage(_company.LogoUrl);
+    }
+    private async Task OnStopEditing()
+    {
+        _editing = !_editing;
+        await _addImage.Reset(true);
+    }
+    private void OnImageUploaded(ImgbbUploadResponse response)
+    {
+        _company.LogoUrl = response.data.display_url;
+        _company.LogoDeleteUrl = response.data.delete_url;
     }
 
 }

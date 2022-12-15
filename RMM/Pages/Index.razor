@@ -1,9 +1,47 @@
 ﻿@page "/"
+@inject IMongoService mongoService
+@inject NavigationManager navManager
 
-<PageTitle>Index</PageTitle>
+<PageTitle>RateMyManagement</PageTitle>
+<div style="display: flex; flex-direction: column; align-items: center;">
+    <RadzenText TextStyle="TextStyle.H2">Rate My Management</RadzenText>
+    <CompanySearch></CompanySearch>
+    <RadzenText TextStyle="TextStyle.Body2" Style="margin-top:15px;">Enter a company name to get started</RadzenText>
+    <Paginiation MetaData="_pagingMetaData" SelectedPage="@OnPageSelected"></Paginiation>
+    @foreach (var company in _currentPageCompanies)
+    {
+        <RadzenCard Style="cursor: pointer; width: 95%; margin-top: 15px; position: relative; display: flex; justify-content:space-between" @onclick="@(() => navManager.NavigateTo($"/company/{company.Id}"))">
+            <h1 style="position: absolute; top: 10px; right: 10px;">@company.Rating</h1>
+            <div style="">
+                <h1>@company.Name</h1>
+                <h3>@company.Industry</h3>
+            </div>
+            <img style="border-radius: 50%; height: 5em; width: 5em; margin-right: 2em;" src="@company.GetLogoUrl()"/>
+        </RadzenCard>
+    }
+</div>
+@code
+{
+    [CascadingParameter] private MainLayout? _layout { get; set; }
+    private List<Company> _currentPageCompanies = new List<Company>();
 
-<h1>Hello, world!</h1>
+    private PagingMetaData? _pagingMetaData = new PagingMetaData()
+    {
+        CurrentPage = 0,
+        PageSize = 0, // Doesn't matter
+        TotalCount = 0, // Doesn't matter
+        TotalPages = 26
 
-Welcome to your new app.
+    };
+    protected override async Task OnInitializedAsync()
+    {
+        await Task.Delay(1);
+        _layout?.DisableSearch();
+        _layout?.DisableLogo();
+    }
 
-<SurveyPrompt Title="How is Blazor working for you?" />
+    private async Task OnPageSelected(string str)
+    {
+        _currentPageCompanies = await mongoService.QueryCompaniesByStartingLetter(str[0]);
+    }
+}

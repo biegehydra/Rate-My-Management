@@ -2,33 +2,62 @@
 @using RateMyManagement.Data
 @inject IImgbbService imgbbService;
 <div class="d-flex flex-column align-items-center align-content-center">
-    @if (test != null)
+    @if (_uploadResponse != null)
     {
-        <img src="@test.data.display_url"/>
+        <img src="@_uploadResponse.data.display_url"/>
+    }
+    else if (_displayUrl != null)
+    {
+        <img src="@_displayUrl" />
     }
     <InputFile OnChange="@LoadFiles"></InputFile>
-    <button @onclick="@DeleteImage">Delete Image</button>
 </div>
 @code {
     [Parameter] 
-    public EventCallback<string> ImageUploaded { get; set; }
-    private string path;
-    private ImgbbUploadResponse test;
+    public EventCallback<ImgbbUploadResponse> ImageUploaded { get; set; }
+    private ImgbbUploadResponse? _uploadResponse;
+    private string? _displayUrl;
     private async Task LoadFiles(InputFileChangeEventArgs args)
     {
-        using var mem = new MemoryStream();
-        await args.File.OpenReadStream().CopyToAsync(mem);
-        var result = await imgbbService.UploadImageAsync(mem.ToArray());
-        if (result.success)
+        if (args.File.Name.Split(".")[1] == "heic")
         {
-            test = result;
+            return;
         }
-        //(test.data.display_url,test.data.delete_url))
-        await ImageUploaded.InvokeAsync(test.data.display_url + " " + test.data.delete_url);
+        try
+        {
+            using var mem = new MemoryStream();
+            await args.File.OpenReadStream(15000000L).CopyToAsync(mem);
+            var result = await imgbbService.UploadImageAsync(mem.ToArray());
+            if (result.success)
+            {
+                await DeleteImage();
+                _uploadResponse = result; 
+                await ImageUploaded.InvokeAsync(_uploadResponse);
+            }
+        }
+        catch (Exception e)
+        {
+            var test = e;
+        }
     }
-
     private async Task DeleteImage()
     {
-        await imgbbService.DeleteImageAsync((test.data.display_url + " " + test.data.delete_url));
+        if (_uploadResponse != null && _uploadResponse.data.delete_url != null)
+        {
+            await imgbbService.DeleteImageAsync(_uploadResponse.data.delete_url);
+        }
+    }
+
+    public void SetImage(string url)
+    {
+        _displayUrl = string.IsNullOrWhiteSpace(url) ? null : url;
+    }
+    public async Task Reset(bool deleteImage)
+    {
+        if (deleteImage)
+        {
+            await DeleteImage();
+        }
+        _uploadResponse = null;
     }
 }

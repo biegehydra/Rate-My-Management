@@ -1,5 +1,9 @@
 ﻿@page "/company/location/{Id}"
+@using System.Security.Claims
+@using Microsoft.AspNetCore.Authorization.Policy
+@using ClaimTypes = RMM.Data.ClaimTypes
 @inject IMongoService mongoService
+@inject UserManager<ApplicationUser> userManager
 @if (_company != null)
 {
     <PageTitle>@(_company.Name + " " + _location.City)</PageTitle>
@@ -7,37 +11,42 @@
         <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; width: -webkit-fill-available;">
             <div style="margin: 10px;">
                 <RadzenCard>Overall Rating: @_location.GetRating().ToString("0.00")</RadzenCard>
-                <RadzenChart>
-                    <RadzenColumnSeries Data="@GetData()" CategoryProperty="Stars" ValueProperty="Frequency" Title="Frequency" ></RadzenColumnSeries>
-                    <RadzenCategoryAxis Min="0" Max="5" Step="1" ></RadzenCategoryAxis>
-                    <RadzenValueAxis Step="1" ></RadzenValueAxis>
-                    <RadzenGridLines Visible="true"></RadzenGridLines>
-                    <RadzenLegend Visible="false"></RadzenLegend>
-                </RadzenChart>
+                <RatingChart Reviews="@(_location.LocatioReviews)"></RatingChart>
             </div>
             <div class="d-flex flex-column align-items-center">
                 <img style="height: 10em; width: 10em; border-radius: 50%" src="@_company.GetLogoUrl()"/>
+                <h1>@_company.Name</h1>
+                <h3>@_company.Industry</h3>
+                <p>@_company.Description</p>
                 @if (!_editing)
                 {
-                    <h1>@_company.Name</h1>
-                    <h3>@_company.Industry</h3>
-                    <p>@_company.Description</p>
                     <p>@_location.City</p>
                     <p>@_location.Address</p>
                 }
                 else
                 {
-                    <RadzenTextBox Style="font-size: calc(1.375rem); cursor:pointer;" Placeholder="@_company.Name">Hello</RadzenTextBox>
-                    <RadzenTextBox Style="font-size: calc(1.2rem);" Placeholder="@_company.Industry">Hello</RadzenTextBox>
+                    <RadzenTemplateForm Style="display: flex; flex-direction: column" TItem="Location" Data="_location" Submit="OnSaveLocationChanges">
+                        <RadzenTextBox Style="font-size: 1rem;" Placeholder="City" @bind-Value="_location.City"></RadzenTextBox>
+                        <RadzenTextBox Style="font-size: 1rem; margin-top: 0.5rem;" Placeholder="Address" @bind-Value="_location.Address"></RadzenTextBox>
+                        <RadzenButton Style="margin-top: 1rem;" ButtonType="ButtonType.Submit">Save Changes</RadzenButton>
+                    </RadzenTemplateForm>
                 }
             </div>
             <div>
-                <ManagerDiv>
-                    <div>
-                        <img @onclick="@(() => _editing = !_editing)"
-                             style="height: 2em; width: 2em; background: white; cursor: pointer; margin: 10px" src="@(_editing ? @"\Images\Icons\Cancel.png)" : @"\Images\Icons\Edit.png")">
+                <AuthorizeView Policy="@PolicyTypes.LocationManager.ToString()" Resource="_location">
+                    <div style="display: flex; justify-content: end">
+                        @if (_editing)
+                        {
+                            <img @onclick="@(() => _editing = !_editing)"
+                                 style="height: 2em; width: 2em; border-radius: 50%; background: white; cursor: pointer; margin: 10px" src="\Images\Icons\Cancel.png">
+                        }
+                        else
+                        {
+                            <img @onclick="@(() => _editing = !_editing)"
+                                 style="height: 2em; width: 2em; border-radius: 50%; background: white; cursor: pointer; margin: 10px" src="\Images\Icons\Edit.png">
+                        }
                     </div>
-                </ManagerDiv>
+                </AuthorizeView>
             </div>
         </div>
         <hr style="width: 100%"/>
@@ -53,27 +62,14 @@
     [Parameter]
     public string Id { get; set; }
     private Location _location { get; set; }
-    private Company _company { get; set; }
+    private Company? _company { get; set; }
     private bool _editing;
 
-    private DataItem[] GetData()
+    public string GetSource()
     {
-        var result = new DataItem[5];
-        if (_location == null) return result;
-        for (int i = 1; i <= 5; i++)
-        {
-            var data = new DataItem();
-            data.Stars = i;
-            data.Frequency = _location.LocatioReviews.Count(x => x.Stars == i);
-            result[i-1] = data;
-        }
-        return result;
+        var test = _editing ? @"\Images\Icons\Cancel.png)" : @"\Images\Icons\Edit.png";
+        return test;
     }
-    public int _reviewType;
-    private string _reviewContent;
-    private string _reviewUsername;
-    private int _reviewStars;
-    private bool _creatingReview;
     protected override async Task OnInitializedAsync()
     {
         var result = await mongoService.TryGetLocationAsync(Id);
@@ -91,13 +87,15 @@
     {
         await OnInitializedAsync();
     }
-    public void ToggleEditing()
+    private async Task OnSaveLocationChanges(Location location)
     {
-    }
-    public class DataItem
-    {
-        public int Stars { get; set; }
-        public int Frequency { get; set; }
+        await mongoService.UpdateLocationDetailsAsync(location.Id, location.Address, location.City);
+        _editing = !_editing;
     }
 
+    private async Task MakeManager(ClaimsPrincipal claimsPrincipal)
+    {
+        var user = await userManager.GetUserAsync(claimsPrincipal);
+        await userManager.AddClaimAsync(user, new Claim(ClaimTypes.EditLocation.ToString(), _location.Id));
+    }
 }

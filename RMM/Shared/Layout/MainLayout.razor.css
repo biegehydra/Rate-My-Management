@@ -16,7 +16,7 @@ main {
     background-color:var(--rz-header-background-color);
     height: 10vh;
     color: white;
-    border-bottom: 1px solid grey;
+    border-bottom: 1px dotted black;
     justify-content: space-between;
     display: flex;
     align-items: center;

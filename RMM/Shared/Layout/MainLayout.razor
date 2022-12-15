@@ -1,0 +1,70 @@
+﻿@implements IDisposable
+@inherits LayoutComponentBase
+@inject NavigationManager navManager;
+@inject UserManager<ApplicationUser> userManager
+@inject RoleManager<IdentityRole> _roleManager
+<PageTitle>RMM</PageTitle>
+
+<div class="page">
+    <main>
+        <div class="top-row">
+            <div>
+                @if (_displayLogo)
+                {
+                    <h1 style="cursor: pointer" @onclick="@(() => navManager.NavigateTo("/"))">Rate My Management</h1>
+                }
+                @if (_searchEnabled)
+                {
+                    <CompanySearch></CompanySearch>
+                }
+            </div>
+            <div style="display: flex; align-items: center;">
+                <LoginDisplay/>
+                <a href="https://docs.microsoft.com/aspnet/" target="_blank">About</a>
+            </div>
+        </div>
+
+        <article>
+            <CascadingValue TValue="MainLayout" Value="this">
+                @Body
+            </CascadingValue>
+        </article>
+    </main>
+</div>
+@code
+{
+    private bool _searchEnabled;
+    private bool _displayLogo;
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        navManager.LocationChanged += OnLocationChanged;
+
+    }
+    private void OnLocationChanged(object? sender, LocationChangedEventArgs args)
+    {
+        EnableAllSections();
+        StateHasChanged();
+    }
+    private void EnableAllSections()
+    {
+        _searchEnabled = true;
+        _displayLogo = true;
+    }
+    public void DisableSearch()
+    {
+        _searchEnabled = false;
+        StateHasChanged();
+    }
+
+    public void DisableLogo()
+    {
+        _displayLogo = false;
+        StateHasChanged();
+    }
+
+    void IDisposable.Dispose()
+    {
+        navManager.LocationChanged -= OnLocationChanged;
+    }
+}
