@@ -1,4 +1,7 @@
 ﻿<RadzenChart>
+    <RadzenCategoryAxis Min="0" Max="5" Step="1"></RadzenCategoryAxis>
+    <RadzenGridLines Visible="true"></RadzenGridLines>
+    <RadzenLegend Visible="false"></RadzenLegend>
 <RadzenColumnSeries Data="@GetData()" CategoryProperty="Stars" ValueProperty="Frequency" />
 </RadzenChart>
 @code {
