@@ -3,11 +3,11 @@
 <RadzenCard Style="padding: 10px 10px; margin:10px; width: 95%;">
     <div class="position-relative d-flex flex-row w-100">
         <div style=" border-right: 1px solid black; padding-right: 10px; display: flex; flex-direction: column; align-items: center; width:15%">
-            <RadzenText Style="display: flex; flex-direction: column; align-items: center;">Position: <span style="white-space: nowrap">@LocationReview.ManagerType.ToStringCorrected()</span></RadzenText>
-            <RadzenText Style="display: flex; flex-direction: column; align-items: center;">Manager: @LocationReview.ManagerName</RadzenText>
+            <RadzenText TextAlign="TextAlign.Center">Position: <span style="white-space: nowrap">@LocationReview.ManagerType.ToStringCorrected()</span></RadzenText>
+            <RadzenText Style="margin-top: 10px; margin-bottom: 10px;" TextAlign="TextAlign.Center">Manager: <br/> @LocationReview.ManagerName</RadzenText>
             <h1><b>@LocationReview.Stars</b></h1>
         </div>
-        <div style="padding-left: 10px; width: 100%;">
+        <div style="padding-left: 10px; width: 85%;">
             <div class="d-flex">
                 <p style="padding-right: 10px;"><b>@(LocationReview.SenderUsername)</b></p>
                 <p style="font-size: .8em; align-self: center;">@LocationReview.SentDateAndTime</p>
@@ -15,7 +15,7 @@
             <hr style="height: 2px; color: black" />
             <RadzenContent Style="padding: 0;">@LocationReview.Content</RadzenContent>
             <hr style="height: 2px; color: black"/>
-            <div style="display: flex">
+            <div style="display: flex; flex-wrap: wrap;">
                 @foreach (var attribut in LocationReview.ManagerAttributes)
                 {
                     <RadzenChip>@attribut.ToStringCorrected()</RadzenChip>

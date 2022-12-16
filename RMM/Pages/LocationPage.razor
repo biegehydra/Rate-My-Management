@@ -11,7 +11,7 @@
         <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; width: -webkit-fill-available;">
             <div style="margin: 10px;">
                 <RadzenCard>Overall Rating: @_location.GetRating().ToString("0.00")</RadzenCard>
-                <RatingChart Reviews="@(_location.LocatioReviews)"></RatingChart>
+                <RatingChart Ratings="@_location.LocatioReviews.Select(x => x.Stars)"></RatingChart>
             </div>
             <div class="d-flex flex-column align-items-center">
                 <img style="height: 10em; width: 10em; border-radius: 50%" src="@_company.GetLogoUrl()"/>

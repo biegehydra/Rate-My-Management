@@ -16,26 +16,4 @@ namespace RMM.Data
         public List<ManagerAttribute> ManagerAttributes { get; set; } = new ();
         public string ManagerName { get; set; }
     }
-    public enum ReviewType
-    {
-        Null,
-        Customer,
-        Employee
-    }
-
-    public enum ManagerType
-    {
-        Null,
-        HumanResources,
-        GeneralManager
-    }
-    public enum ManagerAttribute
-    {
-        Null,
-        Rude,
-        Condescending,
-        Helpful,
-        Understanding,
-
-    }
 }

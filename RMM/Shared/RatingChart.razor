@@ -1,23 +1,24 @@
 ﻿<RadzenChart >
     <RadzenColumnSeries Data="@GetData()" CategoryProperty="Stars" ValueProperty="Frequency" Title="Frequency" ></RadzenColumnSeries>
-    <RadzenCategoryAxis Min="0" Max="5" Step="1" ></RadzenCategoryAxis>
+    <RadzenCategoryAxis Min="0" Max="5" Step="1"  ></RadzenCategoryAxis>
     <RadzenValueAxis Step="1" ></RadzenValueAxis>
     <RadzenGridLines Visible="true"></RadzenGridLines>
     <RadzenLegend Visible="false"></RadzenLegend>
 </RadzenChart>
 
 @code {
-    [Parameter] public List<LocationReview>? Reviews { get; set; }
+    [Parameter] public IEnumerable<int>? Ratings { get; set; }
     private DataItem[] GetData()
     {
+        if (Ratings == null) return null;
         var result = new DataItem[5];
         for (int i = 1; i <= 5; i++)
         {
             var data = new DataItem();
             data.Stars = i;
-            if (Reviews != null)
+            if (Ratings != null)
             {
-                data.Frequency = Reviews.Count(x => x.Stars == i);
+                data.Frequency = Ratings.Count(x => x == i);
             }
             else
             {
