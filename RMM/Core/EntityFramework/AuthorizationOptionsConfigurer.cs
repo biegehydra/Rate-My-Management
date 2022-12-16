@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.Extensions.Options;
-using RateMyManagement.Data;
+using RMM.Core.EntityFramework.Authorization;
+using RMM.Data;
 
-namespace RMM.Data.EntityFramework
+namespace RMM.Core.EntityFramework
 {
     public class AuthorizationOptionsConfigurer
     {

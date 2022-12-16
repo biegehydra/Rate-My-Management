@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using RMM.Core.EntityFramework;
 using RMM.Data;
 
 namespace RMM.Areas.Identity.Pages.Account.Manage

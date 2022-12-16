@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-namespace RMM.Data
+namespace RMM.Core.EntityFramework
 {
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {

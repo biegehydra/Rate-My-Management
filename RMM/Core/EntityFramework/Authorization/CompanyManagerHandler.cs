@@ -1,7 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using RateMyManagement.Data;
+using RMM.Data;
 
-namespace RMM.Data
+namespace RMM.Core.EntityFramework.Authorization
 {
     public class CompanyManagerHandler : AuthorizationHandler<IdMatchesCompanyRequirement>
     {

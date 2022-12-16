@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using RMM.Data;
 using System;
+using RMM.Core.EntityFramework;
 
 namespace RMM.Data.Migrations
 {

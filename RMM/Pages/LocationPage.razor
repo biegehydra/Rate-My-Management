@@ -1,6 +1,7 @@
 ﻿@page "/company/location/{Id}"
 @using System.Security.Claims
 @using Microsoft.AspNetCore.Authorization.Policy
+@using RMM.Core.EntityFramework
 @using ClaimTypes = RMM.Data.ClaimTypes
 @inject IMongoService mongoService
 @inject UserManager<ApplicationUser> userManager
@@ -47,6 +48,7 @@
                         }
                     </div>
                 </AuthorizeView>
+                <RatingChart2 Ratings="@_location.LocatioReviews.Select(x => x.Stars)"></RatingChart2>
             </div>
         </div>
         <hr style="width: 100%"/>

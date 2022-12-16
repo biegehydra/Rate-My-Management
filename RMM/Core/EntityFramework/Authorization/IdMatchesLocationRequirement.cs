@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 
-namespace RMM.Data
+namespace RMM.Core.EntityFramework.Authorization
 {
     public class IdMatchesLocationRequirement : IAuthorizationRequirement
     {

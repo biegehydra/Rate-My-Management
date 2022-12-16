@@ -1,0 +1,55 @@
+﻿<RadzenChart>
+<RadzenColumnSeries Data="@GetData()" CategoryProperty="Stars" ValueProperty="Frequency" />
+</RadzenChart>
+@code {
+    class DataItem
+    {
+        public string Stars { get; set; }
+        public int Frequency { get; set; }
+    }
+    [Parameter] public IEnumerable<int>? Ratings { get; set; }
+
+    private DataItem[] GetData()
+    {
+        var result = new DataItem[5];
+        for (int i = 1; i <= 5; i++)
+        {
+            var data = new DataItem
+                {
+                    Stars = i.ToString(),
+                    Frequency = Ratings.Count(x => x == i)
+                };
+            result[i - 1] = data;
+        }
+        return result;
+    }
+
+    DataItem[] revenue = new DataItem[]
+    {
+        new DataItem
+        {
+            Stars = "1",
+            Frequency = 1
+        },
+        new DataItem
+        {
+            Stars = "2",
+            Frequency = 4
+        },
+        new DataItem
+        {
+            Stars = "3",
+            Frequency = 3
+        },
+        new DataItem
+        {
+            Stars = "4",
+            Frequency = 5
+        },
+        new DataItem()
+        {
+            Stars = "5",
+            Frequency = 7
+        }
+    };
+}

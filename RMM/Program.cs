@@ -10,8 +10,9 @@ using RateMyManagement.Data;
 using RateMyManagement.IServices;
 using RateMyManagement.Services;
 using RMM.Areas.Identity;
+using RMM.Core.EntityFramework;
+using RMM.Core.EntityFramework.Authorization;
 using RMM.Data;
-using RMM.Data.EntityFramework;
 
 var builder = WebApplication.CreateBuilder(args);
 

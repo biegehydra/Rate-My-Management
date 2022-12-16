@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 
-namespace RMM.Data
+namespace RMM.Core.EntityFramework
 {
     public class ApplicationUser : IdentityUser
     {

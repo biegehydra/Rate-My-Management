@@ -1,36 +1,42 @@
-﻿<RadzenChart >
-    <RadzenColumnSeries Data="@GetData()" CategoryProperty="Stars" ValueProperty="Frequency" Title="Frequency" ></RadzenColumnSeries>
-    <RadzenCategoryAxis Min="0" Max="5" Step="1"  ></RadzenCategoryAxis>
-    <RadzenValueAxis Step="1" ></RadzenValueAxis>
+﻿<RadzenChart>
+    <RadzenColumnSeries Data="@Data" CategoryProperty="Stars" ValueProperty="Frequency" Title="Frequency"></RadzenColumnSeries>
+    <RadzenCategoryAxis Min="0" Max="5" Step="1"></RadzenCategoryAxis>
+    <RadzenValueAxis Step="1"></RadzenValueAxis>
     <RadzenGridLines Visible="true"></RadzenGridLines>
     <RadzenLegend Visible="false"></RadzenLegend>
 </RadzenChart>
 
 @code {
     [Parameter] public IEnumerable<int>? Ratings { get; set; }
+
+    private DataItem[]? _data;
+    private DataItem[]? Data
+    {
+        get
+        {
+            if (Ratings == null) return null;
+            return _data ?? GetData();
+        }
+        set => _data = value;
+    }
     private DataItem[] GetData()
     {
-        if (Ratings == null) return null;
         var result = new DataItem[5];
         for (int i = 1; i <= 5; i++)
         {
-            var data = new DataItem();
-            data.Stars = i;
-            if (Ratings != null)
+            var data = new DataItem
             {
-                data.Frequency = Ratings.Count(x => x == i);
-            }
-            else
-            {
-                data.Frequency = 0;
-            }
+                Stars = i.ToString(),
+                Frequency = Ratings.Count(x => x == i)
+            };
             result[i-1] = data;
         }
+        _data = result;
         return result;
     }
-    public class DataItem
+    class DataItem
     {
-        public int Stars { get; set; }
+        public string Stars { get; set; }
         public int Frequency { get; set; }
     }
 }
