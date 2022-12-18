@@ -18,7 +18,7 @@
                 @if (!_editing)
                 {
                     <img src="@_company.GetLogoUrl()"/>
-                    <h1>@_company.Name</h1>
+                    <h1 align="center">@_company.Name</h1>
                     <h3>@_company.Industry</h3>
                     <p>@_company.Description</p>
                 }
@@ -92,7 +92,7 @@
                         <div class="review">
                             <p>@location.Address</p>
                             <p>@location.City</p>
-                            <h1>@location.GetRating()</h1>
+                            <h1>@location.GetRating().ToString("0.00")</h1>
                         </div>
                     </RadzenCard>
                 }

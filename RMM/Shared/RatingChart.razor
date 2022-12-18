@@ -1,6 +1,18 @@
 ﻿<RadzenChart>
-    <RadzenColumnSeries Data="@(Data ?? GetData())" CategoryProperty="Stars" ValueProperty="Frequency" />
-    <RadzenCategoryAxis Min="0" Max="5" Step="1"></RadzenCategoryAxis>
+    <RadzenColumnSeries Data="@(Data ?? GetData())" CategoryProperty="Stars" ValueProperty="Frequency" Title="Frequency">
+        <TooltipTemplate>
+            <div>
+                <p>Frequency: @context.Frequency</p>
+                <p>Stars: @context.Stars</p>
+            </div>
+        </TooltipTemplate>
+    </RadzenColumnSeries>
+    <RadzenValueAxis Step="2" Min="0" >
+        <RadzenAxisTitle Text="Frequency"></RadzenAxisTitle>
+    </RadzenValueAxis>
+    <RadzenCategoryAxis Min="0" Max="5" Step="1">
+        <RadzenAxisTitle Text="Stars"></RadzenAxisTitle>
+    </RadzenCategoryAxis>
     <RadzenGridLines Visible="true"></RadzenGridLines>
     <RadzenLegend Visible="false"></RadzenLegend>
 </RadzenChart>

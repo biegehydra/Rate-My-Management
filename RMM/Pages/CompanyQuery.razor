@@ -11,18 +11,18 @@
             <p>Think were missing your company?</p>
             <a href="/create/company/">Click her to create company</a>
         }
-        @foreach (var company in CompaniesQueried)
-        {
-            <div class="company m-3" @onclick="@(() => navManager.NavigateTo($"/company/{company.Id}"))">
-                <span class="company-rating">@company.Rating</span>
-                <div>
-                    <h1>@company.Name</h1>
-                    <h3>@company.Industry</h3>
-                </div>
-                <img src="@company.GetLogoUrl()"/>
-            </div>
-        }
     </RadzenCard>
+    @foreach (var company in CompaniesQueried)
+    {
+        <RadzenCard Style="cursor: pointer; width: 95%; margin-top: 15px; position: relative; display: flex; justify-content:space-between" @onclick="@(() => navManager.NavigateTo($"/company/{company.Id}"))">
+            <h1 style="position: absolute; top: 10px; right: 10px;">@company.Rating.ToString("0.00")</h1>
+            <div>
+                <h1>@company.Name</h1>
+                <h3>@company.Industry</h3>
+            </div>
+            <img style="border-radius: 50%; height: 5em; width: 5em; margin-right: 5em;" src="@company.GetLogoUrl()"/>
+        </RadzenCard>
+    }
 </div>
 @code {
     [Parameter]
@@ -32,6 +32,6 @@
     protected override async Task OnParametersSetAsync()
     {
         var temp = await companyService.GetAllCompaniesAsync();
-        CompaniesQueried = temp.Where(x => x.Name.Contains(query)).ToList();
+        CompaniesQueried = temp.Where(x => x.Name.ToLower().Contains(query.ToLower())).ToList();
     }
 }

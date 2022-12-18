@@ -1,8 +1,9 @@
 ﻿@page "/company/location/{Id}"
 @using System.Security.Claims
-@using Microsoft.AspNetCore.Authorization.Policy
 @using RMM.Core.EntityFramework
 @using ClaimTypes = RMM.Data.ClaimTypes
+@using System.Globalization
+@using System.Text.RegularExpressions
 @inject IMongoService mongoService
 @inject UserManager<ApplicationUser> userManager
 @if (_company != null)
@@ -16,7 +17,7 @@
             </div>
             <div class="d-flex flex-column align-items-center">
                 <img style="height: 10em; width: 10em; border-radius: 50%" src="@_company.GetLogoUrl()"/>
-                <h1>@_company.Name</h1>
+                <h1 align="center">@_company.Name</h1>
                 <h3>@_company.Industry</h3>
                 <p>@_company.Description</p>
                 @if (!_editing)
@@ -51,6 +52,14 @@
             </div>
         </div>
         <hr style="width: 100%"/>
+        <RadzenMenu Click="@OnSortByClicked">
+            <RadzenMenuItem Text="Sort by">
+                <RadzenMenuItem Icon="hourglass_full" Text="Most Recent"></RadzenMenuItem>
+                <RadzenMenuItem Icon="hourglass_empty" Text="Least Recent"></RadzenMenuItem>
+                <RadzenMenuItem Icon="account_circle" Text="Sender Username"></RadzenMenuItem>
+                <RadzenMenuItem Icon="face" Text="Employee Name" ></RadzenMenuItem>
+            </RadzenMenuItem>
+        </RadzenMenu>
         <LocationReviewForm LocationId="@_location.Id" LocationReview="@(new LocationReview())" SubmitCallback="OnSubmitReview"></LocationReviewForm>
         @foreach (var review in _location.LocatioReviews)
         {
@@ -83,6 +92,7 @@
         {
             _company = result2.Item2;
         }
+        _location.LocatioReviews = _location.LocatioReviews.OrderByDescending(x => DateTime.Parse(x.SentDateAndTime,  CultureInfo.InvariantCulture)).ToList();
     }
     private async Task OnSubmitReview()
     {
@@ -98,5 +108,25 @@
     {
         var user = await userManager.GetUserAsync(claimsPrincipal);
         await userManager.AddClaimAsync(user, new Claim(ClaimTypes.EditLocation.ToString(), _location.Id));
+    }
+    private void OnSortByClicked(MenuItemEventArgs args)
+    {
+        switch (args.Text)
+        {
+            case "Most Recent":
+                _location.LocatioReviews = _location.LocatioReviews.OrderByDescending(x => DateTime.Parse(x.SentDateAndTime, CultureInfo.InvariantCulture)).ToList();
+                break;
+            case "Least Recent":
+                _location.LocatioReviews = _location.LocatioReviews.OrderBy(x => DateTime.Parse(x.SentDateAndTime, CultureInfo.InvariantCulture)).ToList();
+                break;
+            case "Sender Username":
+                _location.LocatioReviews = _location.LocatioReviews.OrderBy(x => x.SenderUsername).ToList();
+                break;
+            case "Employee Name":
+                _location.LocatioReviews = _location.LocatioReviews.OrderBy(x => x.ManagerName).ToList();
+                break;
+                
+        }
+        
     }
 }

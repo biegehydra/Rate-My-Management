@@ -7,42 +7,5 @@
 .page-container {
     display: flex;
     flex-direction: column;
-    height: 90vh;
-}
-.results {
-    display: flex;
-    flex-direction:column;
-    justify-content: start;
     align-items: center;
-    align-content: center;
-    border: 3px solid white;
-    height: 100%;
-    margin: 0em 20em;
-}
-.company {
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    border: 2px solid black;
-    border-radius: 10px;
-    padding: 10px;
-}
-.company * {
-    margin: 0px 10px;
-}
-.company-rating {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 5rem;
-    width: 5rem;
-    font-size: 3em;
-    font-weight: 700;
-    border: 1px solid white;
-    border-radius: 50%;
-}
-img {
-    height: 5em;
-    width: 5em;
-    border-radius: 50%;
 }

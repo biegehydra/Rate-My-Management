@@ -43,6 +43,14 @@ namespace RateMyManagement.Services
             if (location != null) return (true, location);
             return (false, default);
         }
+        public async Task<(bool, List<Location>?)> TryGetLocationsAsync(IEnumerable<string> locationIds)
+        {
+            var filter = Builders<Location>.Filter.In(x => x.Id, locationIds);
+            var cursor = await _locationTable.FindAsync(filter);
+            var locations = await cursor.ToListAsync();
+            if (locations != null) return (true, locations);
+            return (false, default);
+        }
 
         public async Task UpdateLocationDetailsAsync(string id, string address, string city)
         {
@@ -78,6 +86,14 @@ namespace RateMyManagement.Services
             var cursor = await _companyTable.FindAsync(x => x.Id == companyId);
             var company = await cursor.FirstOrDefaultAsync();
             if (company != null) return (true, company);
+            return (false, default);
+        }
+        public async Task<(bool, List<Company>?)> TryGetCompaniesAsync(IEnumerable<string> companyIds)
+        {
+            var filter = Builders<Company>.Filter.In(x => x.Id, companyIds);
+            var cursor = await _companyTable.FindAsync(filter);
+            var companies = await cursor.ToListAsync();
+            if (companies != null) return (true, companies);
             return (false, default);
         }
         public async Task AddLocationIdToCompanyAsync(string companyId, string locationId)

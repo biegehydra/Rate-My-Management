@@ -21,6 +21,10 @@
                     <RadzenChip>@attribut.ToStringCorrected()</RadzenChip>
                 }
             </div>
+            @if (LocationReview.Type == ReviewType.Employee)
+            {
+                <h6 style="position: absolute; top: 5px; right: 5px; color: blue; background-color: black; padding: 3px;">Employee Review</h6>
+            }
         </div>
     </div>
 </RadzenCard>

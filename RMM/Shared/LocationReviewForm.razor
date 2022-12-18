@@ -11,10 +11,14 @@
         {
             <AuthorizeView Context="context2" Policy="@PolicyTypes.AuthorizedUser.ToString()">
                 <Authorized>
-                    <RadzenButton Click="@(() => _creatingReview = true)">Create review</RadzenButton>
+                    <div style="display: flex; justify-content: space-between">
+                        <RadzenButton Click="@(() => _creatingReview = true)" Style="height: 3em;">Create review</RadzenButton>
+                    </div>
                 </Authorized>
                 <NotAuthorized>
-                    <RadzenButton Disabled="true">Create review</RadzenButton>
+                    <div>
+                        <RadzenButton Disabled="true">Create review</RadzenButton>
+                    </div>
                 </NotAuthorized>
             </AuthorizeView>
         }
@@ -23,33 +27,33 @@
             <div class="d-flex">
                 <div class="d-flex flex-column align-items-center">
                     You Are?
-                    <RadzenRadioButtonList Name="ManagerType" TValue="int" Change="OnReviewTypeChange" >
+                    <RadzenRadioButtonList Name="ReviewType" TValue="int" @bind-Value="Reviewtype">
                         <Items>
                             <RadzenRadioButtonListItem Text="Employee" Value="1"/>
                             <RadzenRadioButtonListItem Text="Customer" Value="2"/>
                         </Items>
                     </RadzenRadioButtonList>
-                    <RadzenRequiredValidator Component="ManagerType" Text="Review type is required!" DefaultValue="0" />
+                    <RadzenRequiredValidator Component="ReviewType" Text="Review type is required!" DefaultValue="0"/>
                     <div class="m-1">
-                        <RadzenTextBox Disabled="true" Value="@_claimsPrincipal.Identity.Name"></RadzenTextBox>
+                        <RadzenTextBox Disabled="true" Value="@_claimsPrincipal?.Identity?.Name"></RadzenTextBox>
                     </div>
                     <div class="m-1">
                         <RadzenRating Name="Rating" @bind-Value="LocationReview.Stars"></RadzenRating>
-                        <RadzenRequiredValidator Component="Rating" Text="Review rating is required!" DefaultValue="0" />
+                        <RadzenRequiredValidator Component="Rating" Text="Review rating is required!" DefaultValue="0"/>
                     </div>
                     <div class="m-1">
                         <RadzenButton ButtonType="ButtonType.Submit">Submit</RadzenButton>
                     </div>
                     <div class="m-1">
-                        <RadzenButton Click="@(() => _creatingReview = false)">Cancel</RadzenButton>
+                        <RadzenButton Click="@OnCancelCreateReview">Cancel</RadzenButton>
                     </div>
                 </div>
                 <div style="width: -webkit-fill-available; display: flex; flex-direction: column">
                     <div style="margin-bottom: 10px; display: flex;">
                         <RadzenTextBox Name="ManagerName" @bind-Value="LocationReview.ManagerName" Placeholder="Manager Name"></RadzenTextBox>
                         <RadzenRequiredValidator Component="ManagerName" Text="Manager name is required!" />
-                        <RadzenDropDown TValue="string" Name="ManagerType" SelectedItemChanged="OnManagerTypeSelectionChange" Placeholder="Manager Type" Data="@ManagerTypes"></RadzenDropDown>
-                        <RadzenRequiredValidator Component="ManagerType" Text="Manager type is required!" DefaultValue="@(string.Empty)"/>
+                        <RadzenDropDown TValue="string" Name="ManagerType" @bind-Value="_managerType" SelectedItemChanged="OnManagerTypeSelectionChange" Placeholder="Manager Type" Data="@ManagerTypes"></RadzenDropDown>
+                        <RadzenRequiredValidator Component="ManagerType" Text="Manager type is required!" DefaultValue="@null"/>
                         <RadzenDropDown Multiple="true" Chips="true" MaxSelectedLabels="20" AllowClear="true" AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" Data=@ManagerAttributes @bind-Value="MultipleAttributes"/>
                     </div>
                     <RadzenTextArea Name="ReviewContent" @bind-Value="LocationReview.Content" Placeholder="Review" Style="width: -webkit-fill-available; height: -webkit-fill-available"></RadzenTextArea>
@@ -65,7 +69,6 @@
     [Parameter] public string LocationId { get; set; }
     [Parameter] public EventCallback SubmitCallback { get; set; }
     private IEnumerable<string> _multiplateAttributes;
-
     public IEnumerable<string> MultipleAttributes
     {
         get { return _multiplateAttributes; }
@@ -84,11 +87,23 @@
             LocationReview.ManagerAttributes = temp;
         }
     }
-
     private bool _creatingReview;
     private List<string> ManagerTypes = ExtensionMethods.GetEnumNamesCorrected<ManagerType>();
     private List<string> ManagerAttributes = ExtensionMethods.GetEnumNamesCorrected<ManagerAttribute>();
     private ClaimsPrincipal _claimsPrincipal;
+
+    private string _managerType;
+
+    private int _reviewType;
+    private int Reviewtype
+    {
+        get { return _reviewType; }
+        set
+        {
+            _reviewType = value;
+            OnReviewTypeChange(_reviewType);
+        }
+    }
     protected override async Task OnInitializedAsync()
     {
         var authState = await authenticationStateProvider.GetAuthenticationStateAsync();
@@ -108,12 +123,25 @@
         }
 
     }
+
+    private void OnCancelCreateReview()
+    {
+        ResetForm();
+        _creatingReview = false;
+    }
     private async Task OnSubmitReview()
     {
+        LocationReview.SenderUsername = _claimsPrincipal.Identity.Name;
         await mongoService.AddLocationReviewAsync(LocationId, LocationReview);
-        LocationReview = new LocationReview();
-        MultipleAttributes = new List<string>();
+        ResetForm();
         _creatingReview = false;
         await SubmitCallback.InvokeAsync();
+    }
+    private void ResetForm()
+    {
+        LocationReview = new LocationReview();
+        MultipleAttributes = new List<string>();
+        _managerType = null;
+        Reviewtype = 0;
     }
 }
