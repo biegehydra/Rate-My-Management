@@ -45,15 +45,7 @@
         _currentPageCompanies = await mongoService.QueryCompaniesByStartingLetter(str[0]);
         foreach (var company in _currentPageCompanies)
         {
-            var result = await mongoService.TryGetCompanyAsync(company.Id);
-            if (result.Item1)
-            {
-                var test = await mongoService.TryGetLocationsAsync(company.LocationIds);
-                if (test.Item1)
-                {
-                    company.Rating = test.Item2.Average(x => x.GetRating());
-                }
-            }
+            company.Rating = await company.GetRating(mongoService);
         }
     }
 }

@@ -136,7 +136,14 @@
         await GetCompanyAsync();
         await GetCompanyLocationsAsync();
         _queriedLocations = _companyLocations;
-        _companyRating = _companyLocations.Average(x => x.GetRating()).ToString("0.00");
+        if (_companyLocations.Count == 0)
+        {
+            _companyRating = "0.00";
+        }
+        else
+        {
+            _companyRating = _companyLocations.Average(x => x.GetRating()).ToString("0.00");
+        }
     }
     private async Task GetCompanyAsync()
     {

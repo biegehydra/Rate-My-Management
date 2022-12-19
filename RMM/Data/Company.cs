@@ -1,5 +1,7 @@
-﻿using MongoDB.Bson;
+﻿using Bogus.DataSets;
+using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
+using RateMyManagement.IServices;
 using RMM.Data;
 
 namespace RateMyManagement.Data
@@ -12,6 +14,19 @@ namespace RateMyManagement.Data
         public string Name { get; set; }
         public string Description { get; set; }
         public float Rating { get; set; }
+        public async Task<float> GetRating(IMongoService mongoService)
+        {
+            var test = await mongoService.TryGetLocationsAsync(LocationIds);
+            if (test.Item1)
+            {
+                if (test.Item2.Count == 0)
+                {
+                    return 0;
+                }
+                return test.Item2.Average(x => x.GetRating());
+            }
+            return 0;
+        }
         public string Industry { get; set; }
         public string LogoUrl { get; set; }
         public string LogoDeleteUrl { get; set; }
