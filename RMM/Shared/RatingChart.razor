@@ -7,9 +7,18 @@
             </div>
         </TooltipTemplate>
     </RadzenColumnSeries>
-    <RadzenValueAxis Step="2" Min="0" >
-        <RadzenAxisTitle Text="Frequency"></RadzenAxisTitle>
-    </RadzenValueAxis>
+    @if (Data.All(x => x.Frequency == 0))
+    {
+        <RadzenValueAxis Step="2" Min="0" Max="10">
+            <RadzenAxisTitle Text="Frequency"></RadzenAxisTitle>
+        </RadzenValueAxis>
+    }
+    else
+    {
+        <RadzenValueAxis Step="2" Min="0" >
+            <RadzenAxisTitle Text="Frequency"></RadzenAxisTitle>
+        </RadzenValueAxis>
+    }
     <RadzenCategoryAxis Min="0" Max="5" Step="1">
         <RadzenAxisTitle Text="Stars"></RadzenAxisTitle>
     </RadzenCategoryAxis>
