@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 
-namespace RMM.Core.EntityFramework.Authorization
+namespace RateMyManagement.Core.EntityFramework.Authorization
 {
     public class IdMatchesCompanyRequirement : IAuthorizationRequirement
     {

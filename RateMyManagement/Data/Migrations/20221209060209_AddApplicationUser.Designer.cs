@@ -5,12 +5,12 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using RMM.Core.EntityFramework;
-using RMM.Data;
+using RateMyManagement.Core.EntityFramework;
+using RateMyManagement.Data;
 
 #nullable disable
 
-namespace RMM.Data.Migrations
+namespace RateMyManagement.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
     [Migration("20221209060209_AddApplicationUser")]

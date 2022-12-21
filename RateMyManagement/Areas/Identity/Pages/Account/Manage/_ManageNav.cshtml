@@ -1,5 +1,4 @@
-﻿@using RMM.Data
-@using RMM.Core.EntityFramework
+﻿@using RateMyManagement.Core.EntityFramework
 @inject SignInManager<ApplicationUser> SignInManager
 @{
     var hasExternalLogins = (await SignInManager.GetExternalAuthenticationSchemesAsync()).Any();

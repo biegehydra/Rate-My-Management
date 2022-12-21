@@ -9,8 +9,8 @@
     flex-direction: row;
     height: 90vh;
     justify-content: center;
-
 }
+
 form {
     border: 1px solid grey;
     display: flex;

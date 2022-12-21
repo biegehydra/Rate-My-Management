@@ -9,10 +9,10 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using RMM.Core.EntityFramework;
-using RMM.Data;
+using RateMyManagement.Core.EntityFramework;
+using RateMyManagement.Data;
 
-namespace RMM.Areas.Identity.Pages.Account.Manage
+namespace RateMyManagement.Areas.Identity.Pages.Account.Manage
 {
     public class IndexModel : PageModel
     {

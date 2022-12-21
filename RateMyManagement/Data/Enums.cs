@@ -1,4 +1,4 @@
-﻿namespace RMM.Data
+﻿namespace RateMyManagement.Data
 {
     public enum ClaimTypes
     {

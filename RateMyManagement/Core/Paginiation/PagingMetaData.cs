@@ -1,4 +1,4 @@
-﻿namespace RMM.Core.Paginiation
+﻿namespace RateMyManagement.Core.Paginiation
 {
     public class PagingMetaData
     {

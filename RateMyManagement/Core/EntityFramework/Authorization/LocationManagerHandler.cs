@@ -1,8 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using RateMyManagement.Data;
-using RMM.Data;
 
-namespace RMM.Core.EntityFramework.Authorization
+namespace RateMyManagement.Core.EntityFramework.Authorization
 {
     public class LocationManagerHandler : AuthorizationHandler<IdMatchesLocationRequirement>
     {
@@ -10,7 +9,7 @@ namespace RMM.Core.EntityFramework.Authorization
         {
             if (context.Resource is Location location)
             {
-                if(context.User.IsInRole("Administrator") || context.User.HasClaim(
+                if (context.User.IsInRole("Administrator") || context.User.HasClaim(
                        claim => claim.Type == ClaimTypes.EditLocation.ToString()
                                 && claim.Value == location.Id || context.User.HasClaim(
                                     claim => claim.Type == ClaimTypes.EditCompany.ToString()

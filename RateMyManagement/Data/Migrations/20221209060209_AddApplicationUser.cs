@@ -2,7 +2,7 @@
 
 #nullable disable
 
-namespace RMM.Data.Migrations
+namespace RateMyManagement.Data.Migrations
 {
     public partial class AddApplicationUser : Migration
     {

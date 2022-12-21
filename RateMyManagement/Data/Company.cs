@@ -2,7 +2,7 @@
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 using RateMyManagement.IServices;
-using RMM.Data;
+using RateMyManagement.Data;
 
 namespace RateMyManagement.Data
 {

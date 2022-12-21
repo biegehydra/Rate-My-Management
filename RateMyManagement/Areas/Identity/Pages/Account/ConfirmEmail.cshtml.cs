@@ -11,10 +11,10 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
-using RMM.Core.EntityFramework;
-using RMM.Data;
+using RateMyManagement.Core.EntityFramework;
+using RateMyManagement.Data;
 
-namespace RMM.Areas.Identity.Pages.Account
+namespace RateMyManagement.Areas.Identity.Pages.Account
 {
     public class ConfirmEmailModel : PageModel
     {

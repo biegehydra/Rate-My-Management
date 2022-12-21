@@ -1,7 +1,7 @@
 ﻿using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
-namespace RMM.Data
+namespace RateMyManagement.Data
 {
     public class LocationReview
     {
@@ -13,7 +13,7 @@ namespace RMM.Data
         public string SentDateAndTime { get; set; } = DateTime.Now.ToShortTimeString() + " " + DateTime.Now.ToShortDateString();
         public ReviewType Type { get; set; }
         public ManagerType ManagerType;
-        public List<ManagerAttribute> ManagerAttributes { get; set; } = new ();
+        public List<ManagerAttribute> ManagerAttributes { get; set; } = new();
         public string ManagerName { get; set; }
     }
 }

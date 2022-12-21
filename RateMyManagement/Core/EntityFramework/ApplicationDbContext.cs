@@ -1,7 +1,8 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using RateMyManagement.Core.DatabaseConfiguration;
 
-namespace RMM.Core.EntityFramework
+namespace RateMyManagement.Core.EntityFramework
 {
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {

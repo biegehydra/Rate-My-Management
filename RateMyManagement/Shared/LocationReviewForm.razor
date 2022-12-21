@@ -1,9 +1,4 @@
-﻿@using RMM.Data
-@using Microsoft.EntityFrameworkCore.Metadata.Conventions
-@using System.Text.RegularExpressions
-@using RMM.Core
-@using System.Security.Claims
-@inject IMongoService mongoService;
+﻿@inject IMongoService mongoService;
 @inject AuthenticationStateProvider authenticationStateProvider
 <RadzenTemplateForm TItem="LocationReview" Data="LocationReview" Style="margin:10px; width: 95%;" Submit="@OnSubmitReview" >
     <RadzenCard>

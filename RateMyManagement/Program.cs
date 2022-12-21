@@ -1,18 +1,12 @@
-using System.Drawing.Text;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
-using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.UI;
 using Microsoft.EntityFrameworkCore;
-using RateMyManagement.Data;
+using RateMyManagement.Areas.Identity;
+using RateMyManagement.Core.EntityFramework;
+using RateMyManagement.Core.EntityFramework.Authorization;
 using RateMyManagement.IServices;
 using RateMyManagement.Services;
-using RMM.Areas.Identity;
-using RMM.Core.EntityFramework;
-using RMM.Core.EntityFramework.Authorization;
-using RMM.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 

@@ -1,6 +1,7 @@
 ﻿* {
     box-sizing: border-box;
 }
+
 .chip {
     display: inline-flex;
     align-items: center;
@@ -11,6 +12,7 @@
     padding: 0 10px;
     margin: 5px;
 }
-.chip .chip-text {
-    font-size: var(--rz-chip-font-size);
-}
+
+    .chip .chip-text {
+        font-size: var(--rz-chip-font-size);
+    }

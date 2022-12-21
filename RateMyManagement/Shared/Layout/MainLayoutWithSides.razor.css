@@ -9,6 +9,7 @@
     grid-template-columns: 1fr 8fr 1fr;
     min-height: 90vh;
 }
+
 .sides {
     background: var(--rz-header-background-color);
 }

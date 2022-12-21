@@ -1,7 +1,7 @@
-﻿using RMM.Data;
+﻿using RateMyManagement.Data;
 using System.Text.RegularExpressions;
 
-namespace RMM.Core
+namespace RateMyManagement.Core
 {
     public static class ExtensionMethods
     {
@@ -26,13 +26,13 @@ namespace RMM.Core
             var words = regex.Split(enumType.ToString());
             return string.Join(" ", words);
         }
-        public static bool MatchesEnumItem<TEnum>(this string str, out TEnum value) where TEnum :  struct, Enum
+        public static bool MatchesEnumItem<TEnum>(this string str, out TEnum value) where TEnum : struct, Enum
         {
             value = default;
             var words = str.Split(' ');
-            var wordString = String.Join("", words);
+            var wordString = string.Join("", words);
 
-            if (Enum.TryParse(wordString,true, out TEnum result))
+            if (Enum.TryParse(wordString, true, out TEnum result))
             {
                 var lowercaseResult = result.ToString().ToLowerInvariant();
                 value = result;

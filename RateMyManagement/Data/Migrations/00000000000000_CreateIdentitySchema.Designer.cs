@@ -4,11 +4,11 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using RMM.Data;
+using RateMyManagement.Data;
 using System;
-using RMM.Core.EntityFramework;
+using RateMyManagement.Core.EntityFramework;
 
-namespace RMM.Data.Migrations
+namespace RateMyManagement.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
     [Migration("00000000000000_CreateIdentitySchema")]
