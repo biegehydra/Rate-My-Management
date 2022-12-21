@@ -3,18 +3,19 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using RateMyManagement.Core.EntityFramework;
-using RateMyManagement.Data;
 
 #nullable disable
 
-namespace RateMyManagement.Data.Migrations
+namespace RateMyManagement.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20221221052745_RolesAndAdmin")]
+    partial class RolesAndAdmin
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -52,24 +53,17 @@ namespace RateMyManagement.Data.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "62a70624-bced-45b1-802c-f81c43ed36c5",
-                            ConcurrencyStamp = "ae094729-4c52-4256-b955-a4cbe3b88c1b",
+                            Id = "ff58952b-d3ef-4997-b61a-80d81b97b009",
+                            ConcurrencyStamp = "f6c4a454-78d6-4eaa-a999-80c3fcc4d31f",
                             Name = "Customer",
                             NormalizedName = "CUSTOMER"
                         },
                         new
                         {
-                            Id = "3496e2c0-5c86-4f63-bec3-eec830d11ee5",
-                            ConcurrencyStamp = "7f6a871f-3aeb-4d1b-9f95-08c5b7fdc196",
+                            Id = "631418d7-ad65-4b34-9d28-14901dc0c897",
+                            ConcurrencyStamp = "e54f557d-6105-4519-88b7-238b6ec438a9",
                             Name = "Administrator",
                             NormalizedName = "ADMINISTRATOR"
-                        },
-                        new
-                        {
-                            Id = "f5455f66-6fe4-4c49-9f44-597cb8e5e017",
-                            ConcurrencyStamp = "bfd356b5-2b82-4e21-b937-fc64ed4f3146",
-                            Name = "Manager",
-                            NormalizedName = "MANAGER"
                         });
                 });
 
@@ -183,7 +177,7 @@ namespace RateMyManagement.Data.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("RateMyManagement.Data.ApplicationUser", b =>
+            modelBuilder.Entity("RateMyManagement.Core.EntityFramework.ApplicationUser", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
@@ -246,6 +240,24 @@ namespace RateMyManagement.Data.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "37875bc7-588f-44f0-8419-9cbfc362e79e",
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "ff7c1ccb-8999-4b1a-af05-692128ec2f33",
+                            Email = "admin@gmail.com",
+                            EmailConfirmed = true,
+                            LockoutEnabled = false,
+                            NormalizedEmail = "ADMIN@GMAIL.COM",
+                            NormalizedUserName = "ADMINISTRATOR",
+                            PasswordHash = "AQAAAAEAACcQAAAAEE9wbiDMioih+rgxXqiZVE/w5v5F4TjX3GcO9VVj4S1kxzay0TMtB58MrZC2KoIH1g==",
+                            PhoneNumberConfirmed = false,
+                            SecurityStamp = "817de208-9709-4b2d-9a38-9f986d74d072",
+                            TwoFactorEnabled = false,
+                            UserName = "Administrator"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -259,7 +271,7 @@ namespace RateMyManagement.Data.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("RateMyManagement.Data.ApplicationUser", null)
+                    b.HasOne("RateMyManagement.Core.EntityFramework.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -268,7 +280,7 @@ namespace RateMyManagement.Data.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("RateMyManagement.Data.ApplicationUser", null)
+                    b.HasOne("RateMyManagement.Core.EntityFramework.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -283,7 +295,7 @@ namespace RateMyManagement.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("RateMyManagement.Data.ApplicationUser", null)
+                    b.HasOne("RateMyManagement.Core.EntityFramework.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -292,7 +304,7 @@ namespace RateMyManagement.Data.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("RateMyManagement.Data.ApplicationUser", null)
+                    b.HasOne("RateMyManagement.Core.EntityFramework.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)

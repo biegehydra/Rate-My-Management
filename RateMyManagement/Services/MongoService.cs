@@ -14,12 +14,12 @@ namespace RateMyManagement.Services
         private IMongoDatabase _database;
         private IMongoCollection<Company> _companyTable;
         private IMongoCollection<Location> _locationTable;
-        public MongoService(string databaseName, string collectionName)
+        public MongoService(string databaseName, string companyCollectionName, string locationCollectionName)
         {
             _mongoClient = new MongoClient("mongodb://localhost:27017");
             _database = _mongoClient.GetDatabase(databaseName);
-            _companyTable = _database.GetCollection<Company>(collectionName);
-            _locationTable = _database.GetCollection<Location>("Location");
+            _companyTable = _database.GetCollection<Company>(companyCollectionName);
+            _locationTable = _database.GetCollection<Location>(locationCollectionName);
         }
         #region Location
         public async Task CreateLocationAsync(Location location)
