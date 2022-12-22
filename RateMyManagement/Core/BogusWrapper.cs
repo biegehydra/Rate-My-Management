@@ -1,6 +1,8 @@
-﻿using Bogus;
+﻿using System.Diagnostics;
+using Bogus;
 using Bogus.DataSets;
 using MongoDB.Bson;
+using Radzen.Blazor;
 using RateMyManagement.Data;
 using RateMyManagement.IServices;
 using Company = RateMyManagement.Data.Company;
@@ -9,7 +11,7 @@ namespace RateMyManagement.Core
 {
     public class BogusWrapper
     {
-        public static List<Company> GenerateFakeCompanies(int count)
+        public static async Task GenerateFakeCompanies(IMongoService mongoService, int count)
         {
             var faker = new Faker<Company>()
                 .StrictMode(true)
@@ -21,7 +23,8 @@ namespace RateMyManagement.Core
                 .RuleFor(c => c.LogoUrl, (f, s) => f.Image.LoremFlickrUrl(500, 500, "business"))
                 .RuleFor(c => c.LogoDeleteUrl, (f, c) => string.Empty)
                 .RuleFor(c => c.Rating, (f, c) => 0);
-            return faker.Generate(count);
+            var companies = faker.Generate(count);
+            await mongoService.CreateCompaniesAsync(companies);
         }
         public static async Task GenerateFakeLocations(IMongoService mongoService, int lower, int upper)
         {
@@ -37,11 +40,9 @@ namespace RateMyManagement.Core
                     .RuleFor(l => l.LocatioReviews, (f, s) => new List<LocationReview>())
                     .RuleFor(l => l.City, (f, s) => f.Address.City());
                 var locations = faker.Generate(random.Next(lower, upper));
-                foreach (var location in locations)
-                {
-                    await mongoService.CreateLocationAsync(location);
-                    await mongoService.AddLocationIdToCompanyAsync(company.Id, location.Id);
-                }
+                var locationIds = locations.Select(x => x.Id);
+                await mongoService.CreateLocationsAsync(locations);
+                await mongoService.AddLocationIdsToCompanyAsync(company.Id, locationIds);
             }
         }
 
@@ -55,13 +56,6 @@ namespace RateMyManagement.Core
             {
                 foreach (var location in company.LocationIds)
                 {
-                    var result = await mongoService.TryGetLocationAsync(location);
-                    if (!result.Item1)
-                    {
-                        Console.WriteLine("Bad");
-                        continue;
-                    }
-
                     var faker = new Faker<LocationReview>()
                         .StrictMode(true)
                         .RuleFor(lr => lr.Id, ObjectId.GenerateNewId().ToString())
@@ -78,11 +72,8 @@ namespace RateMyManagement.Core
                         .RuleFor(lr => lr.Content, (f, s) => f.Lorem.Paragraph(3))
                         .RuleFor(lr => lr.ManagerAttributes,
                             (f, s) => f.PickRandom(Enum.GetValues<ManagerAttribute>(), random.Next(1, Enum.GetValues<ManagerAttribute>().Length)).ToList());
-                    var reviews = faker.Generate(20);
-                    foreach (var locationReview in reviews)
-                    {
-                        await mongoService.AddLocationReviewAsync(location, locationReview);
-                    }
+                    var reviews = faker.Generate(random.Next(lower, upper));
+                    await mongoService.AddLocationReviewsAsync(location, reviews);
                 }
             }
         }

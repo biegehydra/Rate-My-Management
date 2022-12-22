@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Radzen;
 using RateMyManagement.Areas.Identity;
 using RateMyManagement.Core.EntityFramework;
 using RateMyManagement.Core.EntityFramework.Authorization;
@@ -22,11 +23,14 @@ builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.R
 builder.Services.AddAuthorizationCore(AuthorizationOptionsConfigurer.Configure);
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
+
+// Configuration
 builder.Services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<ApplicationUser>>();
 builder.Services.AddSingleton<IMongoService>(x => new MongoService("RateMyManagement", "Company", "Location"));
 builder.Services.AddSingleton<IImgbbService, ImgbbService>();
 builder.Services.AddSingleton<IAuthorizationHandler, LocationManagerHandler>();
 builder.Services.AddSingleton<IAuthorizationHandler, CompanyManagerHandler>();
+builder.Services.AddScoped<ContextMenuService>();
 
 var app = builder.Build();
 

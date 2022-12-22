@@ -1,4 +1,4 @@
-﻿<AuthorizeView Policy="Admin">
+﻿<AuthorizeView Policy="@PolicyTypes.Admin.ToString()">
     <Authorized>
         @ChildContent
     </Authorized>

@@ -5,7 +5,6 @@ using System.ComponentModel.Design;
 using System.Text.RegularExpressions;
 using MongoDB.Bson;
 using ZstdSharp.Unsafe;
-
 namespace RateMyManagement.Services
 {
     public class MongoService : IMongoService
@@ -35,6 +34,10 @@ namespace RateMyManagement.Services
                 throw new NotImplementedException();
             }
         }
+        public async Task CreateLocationsAsync(IEnumerable<Location> locations)
+        {
+            await _locationTable.InsertManyAsync(locations);
+        }
         public async Task<(bool, Location?)> TryGetLocationAsync(string locationId)
         {
             var cursor = await _locationTable.FindAsync(x => x.Id == locationId);
@@ -51,6 +54,7 @@ namespace RateMyManagement.Services
             return (false, default);
         }
 
+
         public async Task UpdateLocationDetailsAsync(string id, string address, string city)
         {
             var filter = Builders<Location>.Filter.Eq(x => x.Id, id);
@@ -61,6 +65,12 @@ namespace RateMyManagement.Services
         {
             var filter = Builders<Location>.Filter.Eq(x => x.Id, locationId);
             var update = Builders<Location>.Update.Push(x => x.LocatioReviews, review);
+            await _locationTable.UpdateOneAsync(filter, update);
+        }
+        public async Task AddLocationReviewsAsync(string locationId, IEnumerable<LocationReview> reviews)
+        {
+            var filter = Builders<Location>.Filter.Eq(x => x.Id, locationId);
+            var update = Builders<Location>.Update.PushEach(x => x.LocatioReviews, reviews);
             await _locationTable.UpdateOneAsync(filter, update);
         }
 
@@ -79,6 +89,10 @@ namespace RateMyManagement.Services
             {
                 throw new NotImplementedException();
             }
+        }
+        public async Task CreateCompaniesAsync(IEnumerable<Company> companies)
+        {
+            await _companyTable.InsertManyAsync(companies);
         }
         public async Task<(bool, Company?)> TryGetCompanyAsync(string companyId)
         {
@@ -99,6 +113,12 @@ namespace RateMyManagement.Services
         {
             var filter = Builders<Company>.Filter.Eq(x => x.Id, companyId);
             var update = Builders<Company>.Update.Push(x => x.LocationIds, locationId);
+            await _companyTable.UpdateOneAsync(filter, update);
+        }
+        public async Task AddLocationIdsToCompanyAsync(string companyId, IEnumerable<string> locationIds)
+        {
+            var filter = Builders<Company>.Filter.Eq(x => x.Id, companyId);
+            var update = Builders<Company>.Update.PushEach(x => x.LocationIds, locationIds);
             await _companyTable.UpdateOneAsync(filter, update);
         }
         public async Task<List<Company>> GetAllCompaniesAsync()

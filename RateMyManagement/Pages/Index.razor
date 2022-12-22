@@ -1,9 +1,11 @@
 ﻿@page "/"
+@using System.Timers
+@using System.Diagnostics
 @inject IMongoService mongoService
 @inject NavigationManager navManager
 @layout MainLayoutWithSides
 <PageTitle>RateMyManagement</PageTitle>
-<div style="display: flex; flex-direction: column; align-items: center;">
+<div style="display: flex; flex-direction: column; align-items: center; position: relative">
     <RadzenText TextStyle="TextStyle.H2">Rate My Management</RadzenText>
     <CompanySearch></CompanySearch>
     <RadzenText TextStyle="TextStyle.Body2" Style="margin-top:15px;">Enter a company name to get started</RadzenText>
@@ -19,6 +21,11 @@
             <img style="border-radius: 50%; height: 5em; width: 5em; margin-right: 5em;" src="@company.GetLogoUrl()"/>
         </RadzenCard>
     }
+    <div style="position: absolute; top: 10px; right: 10px;">
+        <AdminDiv>
+            <RadzenButton Style="Background:red;" Size="ButtonSize.Small" Click="PopulateSite">Populate companies and locations</RadzenButton>
+        </AdminDiv>
+    </div>
 </div>
 @code
 {
@@ -47,5 +54,12 @@
         {
             company.Rating = await company.GetRating(mongoService);
         }
+    }
+    private async Task PopulateSite()
+    {
+        await BogusWrapper.GenerateFakeCompanies(mongoService, 100);
+        await BogusWrapper.GenerateFakeLocations(mongoService, 5, 30);
+        await BogusWrapper.GenerateFakeLocationReviews(mongoService, 10, 20);
+        Console.WriteLine("Created 100 fake companies");
     }
 }
