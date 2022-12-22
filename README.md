@@ -8,4 +8,4 @@
 2. Mongo database and collection name can be customized in the Program.cs file
 3. Imgbb Api key MUST be added to ImgbbService.cs file, in the constructor, or changing images won't work
 
-@[Homepage](https://raw.githubusercontent.com/Connorh29/Rate-My-Management/master/Images/HomePage.png?token=GHSAT0AAAAAAB4MVOSRA6DB6XO5QRWYIJ46Y5ECQZA)
+@[Homepage](./Images/HomePage.png)
