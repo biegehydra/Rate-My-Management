@@ -17,7 +17,7 @@ namespace RateMyManagement.Services
 
         public ImgbbService()
         {
-            _clientKey = "9efe730b72a119a8eca807331cc4bc0b";
+            _clientKey = "";
         }
 
         public async Task<ImgbbUploadResponse> UploadImageAsync(byte[] imageArray)
