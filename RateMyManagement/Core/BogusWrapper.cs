@@ -11,7 +11,7 @@ namespace RateMyManagement.Core
 {
     public class BogusWrapper
     {
-        public static async Task GenerateFakeCompanies(IMongoService mongoService, int count)
+        public static async Task GenerateFakeCompanies(ICompanyService mongoService, int count)
         {
             var faker = new Faker<Company>()
                 .StrictMode(true)
@@ -26,9 +26,9 @@ namespace RateMyManagement.Core
             var companies = faker.Generate(count);
             await mongoService.CreateCompaniesAsync(companies);
         }
-        public static async Task GenerateFakeLocations(IMongoService mongoService, int lower, int upper)
+        public static async Task GenerateFakeLocations(ICompanyService companyService, ILocationService locationService, int lower, int upper)
         {
-            var companies = await mongoService.GetAllCompaniesAsync();
+            var companies = await companyService.GetAllCompaniesAsync();
             foreach (var company in companies)
             {
                 var random = new Random();
@@ -41,14 +41,14 @@ namespace RateMyManagement.Core
                     .RuleFor(l => l.City, (f, s) => f.Address.City());
                 var locations = faker.Generate(random.Next(lower, upper));
                 var locationIds = locations.Select(x => x.Id);
-                await mongoService.CreateLocationsAsync(locations);
-                await mongoService.AddLocationIdsToCompanyAsync(company.Id, locationIds);
+                await locationService.CreateLocationsAsync(locations);
+                await companyService.AddLocationIdsToCompanyAsync(company.Id, locationIds);
             }
         }
 
-        public static async Task GenerateFakeLocationReviews(IMongoService mongoService, int lower, int upper)
+        public static async Task GenerateFakeLocationReviews(ILocationService locationService, ICompanyService companyService, int lower, int upper)
         {
-            var companies = await mongoService.GetAllCompaniesAsync();
+            var companies = await companyService.GetAllCompaniesAsync();
             var random = new Random();
             var today = DateTime.Now;
             var thirtyDaysAgo = today.Subtract(new TimeSpan(30, 0, 0, 0));
@@ -73,7 +73,7 @@ namespace RateMyManagement.Core
                         .RuleFor(lr => lr.ManagerAttributes,
                             (f, s) => f.PickRandom(Enum.GetValues<ManagerAttribute>(), random.Next(1, Enum.GetValues<ManagerAttribute>().Length)).ToList());
                     var reviews = faker.Generate(random.Next(lower, upper));
-                    await mongoService.AddLocationReviewsAsync(location, reviews);
+                    await locationService.AddLocationReviewsAsync(location, reviews);
                 }
             }
         }

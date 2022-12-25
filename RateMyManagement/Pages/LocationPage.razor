@@ -1,6 +1,7 @@
 ﻿@page "/company/location/{Id}"
 @using ClaimTypes = RateMyManagement.Data.ClaimTypes
-@inject IMongoService mongoService
+@inject ILocationService locationService
+@inject ICompanyService companyService
 @inject UserManager<ApplicationUser> userManager
 @if (_company != null)
 {
@@ -78,16 +79,8 @@
     }
     protected override async Task OnInitializedAsync()
     {
-        var result = await mongoService.TryGetLocationAsync(Id);
-        if (result.Item1)
-        {
-            _location = result.Item2;
-        }
-        var result2 = await mongoService.TryGetCompanyAsync(_location.CompanyId);
-        if (result2.Item1)
-        {
-            _company = result2.Item2;
-        }
+        _location = await locationService.GetLocationAsync(Id);
+        _company = await companyService.GetCompanyAsync(_location.CompanyId);
         _location.LocatioReviews = _location.LocatioReviews.OrderByDescending(x => DateTime.Parse(x.SentDateAndTime,  CultureInfo.InvariantCulture)).ToList();
     }
     private async Task OnSubmitReview()
@@ -96,7 +89,7 @@
     }
     private async Task OnSaveLocationChanges(Location location)
     {
-        await mongoService.UpdateLocationDetailsAsync(location.Id, location.Address, location.City);
+        await locationService.SaveLocationAsync(location);
         _editing = !_editing;
     }
 

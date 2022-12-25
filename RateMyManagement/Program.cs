@@ -26,8 +26,9 @@ builder.Services.AddServerSideBlazor();
 
 // Configuration
 builder.Services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<ApplicationUser>>();
-builder.Services.AddSingleton<IMongoService>(x => new MongoService("RateMyManagement", "Company", "Location"));
-builder.Services.AddSingleton<IImgbbService, ImgbbService>();
+builder.Services.AddSingleton<ICompanyService>(x => new MongoCompanyService("RateMyManagement", "Company", "Location"));
+builder.Services.AddSingleton<ILocationService>(x => new MongoLocationService("RateMyManagement", "Company", "Location"));
+builder.Services.AddSingleton<IImageService, ImgbbService>();
 builder.Services.AddSingleton<IAuthorizationHandler, LocationManagerHandler>();
 builder.Services.AddSingleton<IAuthorizationHandler, CompanyManagerHandler>();
 builder.Services.AddScoped<ContextMenuService>();

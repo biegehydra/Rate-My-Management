@@ -1,4 +1,4 @@
-﻿@inject IMongoService mongoService;
+﻿@inject ILocationService locationService;
 @inject AuthenticationStateProvider authenticationStateProvider
 <RadzenTemplateForm TItem="LocationReview" Data="LocationReview" Style="margin:10px; width: 95%;" Submit="@OnSubmitReview" >
     <RadzenCard>
@@ -127,7 +127,7 @@
     private async Task OnSubmitReview()
     {
         LocationReview.SenderUsername = _claimsPrincipal.Identity.Name;
-        await mongoService.AddLocationReviewAsync(LocationId, LocationReview);
+        await locationService.AddLocationReviewAsync(LocationId, LocationReview);
         ResetForm();
         _creatingReview = false;
         await SubmitCallback.InvokeAsync();

@@ -1,5 +1,5 @@
 ﻿@page "/create/company/"
-@inject IMongoService companyService;
+@inject ICompanyService companyService;
 @layout MainLayoutWithSides
 <div class="page-container">
     <RadzenCard Style="margin: 10px;">
@@ -56,7 +56,7 @@
                 LogoDeleteUrl = _companyLogoDeleteUrl,
                 LogoUrl = _companyLogoUrl
             };
-            await companyService.CreateCompanyAsync(company);
+            await companyService.SaveCompanyAsync(company);
             ResetForm();
         }
         catch (Exception e)

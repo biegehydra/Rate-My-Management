@@ -14,18 +14,11 @@ namespace RateMyManagement.Data
         public string Name { get; set; }
         public string Description { get; set; }
         public float Rating { get; set; }
-        public async Task<float> GetRating(IMongoService mongoService)
+        public async Task<float> GetRating(ILocationService locationService)
         {
-            var test = await mongoService.TryGetLocationsAsync(LocationIds);
-            if (test.Item1)
-            {
-                if (test.Item2.Count == 0)
-                {
-                    return 0;
-                }
-                return test.Item2.Average(x => x.GetRating());
-            }
-            return 0;
+            var locations = await locationService.GetLocationsAsync(LocationIds);
+            if (locations.Count == 0) return 0;
+            return locations.Average(x => x.GetRating());
         }
         public string Industry { get; set; }
         public string LogoUrl { get; set; }

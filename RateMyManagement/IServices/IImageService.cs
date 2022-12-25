@@ -2,7 +2,7 @@
 
 namespace RateMyManagement.IServices
 {
-    public interface IImgbbService
+    public interface IImageService
     {
         public Task<ImgbbUploadResponse> UploadImageAsync(byte[] image);
         public Task DeleteImageAsync(string deleteUrl);
