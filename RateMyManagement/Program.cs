@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Radzen;
+using RateMyManagement;
 using RateMyManagement.Areas.Identity;
 using RateMyManagement.Core.EntityFramework;
 using RateMyManagement.Core.EntityFramework.Authorization;
@@ -31,9 +32,7 @@ builder.Services.AddSingleton<IImgbbService, ImgbbService>();
 builder.Services.AddSingleton<IAuthorizationHandler, LocationManagerHandler>();
 builder.Services.AddSingleton<IAuthorizationHandler, CompanyManagerHandler>();
 builder.Services.AddScoped<ContextMenuService>();
-
 var app = builder.Build();
-
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
