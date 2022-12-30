@@ -5,6 +5,11 @@ namespace RateMyManagement.Data
 {
     public class Location
     {
+        public static readonly Location Default = new Location()
+        {
+            Id = ObjectId.GenerateNewId().ToString(),
+
+    };
         [BsonRepresentation(BsonType.ObjectId)]
         public string Id { get; set; } = ObjectId.GenerateNewId().ToString();
         public string CompanyId { get; set; }

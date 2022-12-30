@@ -63,7 +63,7 @@
     [Parameter] public LocationReview LocationReview { get; set; } = new LocationReview();
     [Parameter] public string LocationId { get; set; }
     [Parameter] public EventCallback SubmitCallback { get; set; }
-    private IEnumerable<string> _multiplateAttributes;
+    private IEnumerable<string> _multiplateAttributes = new List<string>();
     public IEnumerable<string> MultipleAttributes
     {
         get { return _multiplateAttributes; }
@@ -85,9 +85,9 @@
     private bool _creatingReview;
     private List<string> ManagerTypes = ExtensionMethods.GetEnumNamesCorrected<ManagerType>();
     private List<string> ManagerAttributes = ExtensionMethods.GetEnumNamesCorrected<ManagerAttribute>();
-    private ClaimsPrincipal _claimsPrincipal;
+    private ClaimsPrincipal? _claimsPrincipal;
 
-    private string _managerType;
+    private string? _managerType;
 
     private int _reviewType;
     private int Reviewtype
@@ -112,7 +112,7 @@
     {
         var asString = args.ToString();
         ManagerType managerType;
-        if (asString.MatchesEnumItem(out managerType))
+        if (asString != null && asString.MatchesEnumItem(out managerType))
         {
             LocationReview.ManagerType = managerType;
         }
@@ -126,6 +126,7 @@
     }
     private async Task OnSubmitReview()
     {
+        if (_claimsPrincipal == null || _claimsPrincipal.Identity == null || _claimsPrincipal.Identity.Name == null) return;
         LocationReview.SenderUsername = _claimsPrincipal.Identity.Name;
         await locationService.AddLocationReviewAsync(LocationId, LocationReview);
         ResetForm();

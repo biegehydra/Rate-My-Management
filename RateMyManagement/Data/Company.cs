@@ -8,6 +8,17 @@ namespace RateMyManagement.Data
 {
     public class Company
     {
+        public static readonly Company Default = new Company()
+        {
+            Id = ObjectId.GenerateNewId().ToString(),
+            Description = "DESCRIPTION",
+            Industry = "INDUSTRY",
+            LocationIds = new List<string>(),
+            LogoDeleteUrl = string.Empty,
+            LogoUrl = string.Empty,
+            Name = "DEFAULT",
+            Rating = 0
+        };
         public static readonly string DefaultUrl = "https://i.ibb.co/WkG4Jgf/test.png";
         [BsonRepresentation(BsonType.ObjectId)]
         public string Id { get; set; } = ObjectId.GenerateNewId().ToString();

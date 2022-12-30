@@ -102,7 +102,7 @@
 
 @code {
     [Parameter]
-    public string CompanyId { get; set; }
+    public string? CompanyId { get; set; }
     private Company _company;
     private List<Location> _companyLocations = new List<Location>();
     private List<Location> _queriedLocations = new List<Location>();
@@ -127,8 +127,8 @@
             }
         }
     }
-    private string _locationAddress;
-    private string _locationCity;
+    private string _locationAddress = String.Empty;
+    private string _locationCity = String.Empty;
     protected override async Task OnInitializedAsync()
     {
         await GetCompanyAsync();
@@ -145,6 +145,7 @@
     }
     private async Task GetCompanyAsync()
     {
+        if (CompanyId == null) return;
         _company = await companyService.GetCompanyAsync(CompanyId);
     }
     private async Task GetCompanyLocationsAsync()

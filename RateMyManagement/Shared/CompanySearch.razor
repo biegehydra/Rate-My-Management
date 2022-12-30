@@ -2,7 +2,7 @@
 <RadzenTextBox Placeholder="Company name" @bind-Value="_query" @onkeyup="OnKeyUp"></RadzenTextBox>
 
 @code {
-    private string _query;
+    private string _query = string.Empty;
 
     private async Task OnKeyUp(KeyboardEventArgs args)
     {
