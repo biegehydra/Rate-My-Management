@@ -1,17 +1,14 @@
 ﻿using System.Text.Json;
-using System.Text.Json.Serialization;
-using MongoDB.Bson.IO;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using RateMyManagement.Data;
 using RateMyManagement.IServices;
-using ZstdSharp.Unsafe;
 
 namespace RateMyManagement.Services
 {
-    public class ImgbbService : IImgbbService
+    public class ImgbbService : IImageService
     {
-        private IWebDriver webDriver;
+        private IWebDriver? webDriver;
         private readonly string _clientKey;
         private static readonly HttpClient _httpClient = new HttpClient();
 
@@ -39,7 +36,7 @@ namespace RateMyManagement.Services
             }
             catch (Exception e)
             {
-                throw new NotImplementedException();
+                throw new Exception("Error uploading image");
             }
         }
 

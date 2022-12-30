@@ -1,5 +1,6 @@
 ﻿@page "/search/company/{query}"
-@inject IMongoService mongoService;
+@inject ICompanyService companyService;
+@inject ILocationService locationService;
 @inject NavigationManager navManager;
 @layout MainLayoutWithSides
 <div class="page-container">
@@ -35,7 +36,7 @@
 </div>
 @code {
     [Parameter]
-    public string query { get; set; }
+    public string? Query { get; set; }
 
     private bool _loading;
     public List<Company> CompaniesQueried { get; set; } = new List<Company>();
@@ -47,12 +48,13 @@
 
     private async Task GetQueriedCompanies()
     {
+        if (Query == null) return;
         _loading = true;
-        var temp = await mongoService.GetAllCompaniesAsync();
-        CompaniesQueried = temp.Where(x => x.Name.ToLower().Contains(query.ToLower())).ToList();
+        var temp = await companyService.GetAllCompaniesAsync();
+        CompaniesQueried = temp.Where(x => x.Name.ToLower().Contains(Query.ToLower())).ToList();
         foreach (var company in CompaniesQueried)
         {
-            company.Rating = await company.GetRating(mongoService);
+            company.Rating = await company.GetRating(locationService);
         }
         _loading = false;
     }

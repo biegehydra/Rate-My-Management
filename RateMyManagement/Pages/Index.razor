@@ -1,7 +1,8 @@
 ﻿@page "/"
 @using System.Timers
 @using System.Diagnostics
-@inject IMongoService mongoService
+@inject ICompanyService companyService
+@inject ILocationService locationService
 @inject NavigationManager navManager
 @layout MainLayoutWithSides
 <PageTitle>RateMyManagement</PageTitle>
@@ -49,17 +50,17 @@
 
     private async Task OnPageSelected(string str)
     {
-        _currentPageCompanies = await mongoService.QueryCompaniesByStartingLetter(str[0]);
+        _currentPageCompanies = await companyService.QueryCompaniesByStartingLetter(str[0]);
         foreach (var company in _currentPageCompanies)
         {
-            company.Rating = await company.GetRating(mongoService);
+            company.Rating = await company.GetRating(locationService);
         }
     }
     private async Task PopulateSite()
     {
-        await BogusWrapper.GenerateFakeCompanies(mongoService, 100);
-        await BogusWrapper.GenerateFakeLocations(mongoService, 5, 30);
-        await BogusWrapper.GenerateFakeLocationReviews(mongoService, 10, 20);
+        await BogusWrapper.GenerateFakeCompanies(companyService, 100);
+        await BogusWrapper.GenerateFakeLocations(companyService, locationService, 5, 30);
+        await BogusWrapper.GenerateFakeLocationReviews(locationService, companyService, 10, 20);
         Console.WriteLine("Created 100 fake companies");
     }
 }

@@ -1,6 +1,7 @@
 ﻿@page "/company/{CompanyId}"
 @layout MainLayoutWithSides
-@inject IMongoService mongoService;
+@inject ILocationService locationService;
+@inject ICompanyService companyService;
 @inject NavigationManager navManager;
 @inject UserManager<ApplicationUser> userManager
 @if (_company != null)
@@ -101,7 +102,7 @@
 
 @code {
     [Parameter]
-    public string CompanyId { get; set; }
+    public string? CompanyId { get; set; }
     private Company _company;
     private List<Location> _companyLocations = new List<Location>();
     private List<Location> _queriedLocations = new List<Location>();
@@ -126,9 +127,8 @@
             }
         }
     }
-
-    private string _locationAddress;
-    private string _locationCity;
+    private string _locationAddress = String.Empty;
+    private string _locationCity = String.Empty;
     protected override async Task OnInitializedAsync()
     {
         await GetCompanyAsync();
@@ -145,24 +145,13 @@
     }
     private async Task GetCompanyAsync()
     {
-        var result = await mongoService.TryGetCompanyAsync(CompanyId);
-        if (result.Item1)
-        {
-            _company = result.Item2;
-        }
+        if (CompanyId == null) return;
+        _company = await companyService.GetCompanyAsync(CompanyId);
     }
     private async Task GetCompanyLocationsAsync()
     {
         _companyLocations.Clear();
-        if (_company == null) return;
-        foreach (var id in _company.LocationIds)
-        {
-            var result = await mongoService.TryGetLocationAsync(id);
-            if (result.Item1)
-            {
-                _companyLocations.Add(result.Item2);
-            }
-        }
+        _companyLocations = await locationService.GetLocationsAsync(_company.LocationIds);
     }
     private async Task OnSubmitLocation()
     {
@@ -173,9 +162,10 @@
             Address = _locationAddress, 
             City = _locationCity
         };
-        await mongoService.CreateLocationAsync(location);
-        await mongoService.AddLocationIdToCompanyAsync(_company.Id, location.Id);
-        await OnInitializedAsync();
+        await locationService.SaveLocationAsync(location);
+        await companyService.AddLocationIdToCompanyAsync(_company.Id, location.Id);
+        _company.LocationIds.Add(location.Id);
+        _companyLocations.Add(location);
         ResetLocation();
     }
     private void ResetLocation()
@@ -186,25 +176,34 @@
     }
     private void Navaway(string id)
     {
-        var navto = $"/company/location/{id}";
-        navManager.NavigateTo(navto);
+        var url = $"/company/location/{id}";
+        navManager.NavigateTo(url);
     }
     private async Task OnCompanyChangesSaved(Company company)
     {
-        await mongoService.UpdateCompanyDetailsAsync(company.Id, company.Name, company.Industry, company.Description);
+        await companyService.SaveCompanyAsync(company);
         _editing = !_editing;
-        await _addImage.Reset(false);
+        if (_addImage != null)
+        {
+            await _addImage.Reset(false);
+        }
     }
     private async Task OnBeginEditing()
     {
         _editing = !_editing;
         await Task.Delay(2);
-        _addImage.SetImage(_company.LogoUrl);
+        if (_addImage != null)
+        {
+            _addImage.SetImage(_company.LogoUrl);
+        }
     }
     private async Task OnStopEditing()
     {
         _editing = !_editing;
-        await _addImage.Reset(true);
+        if (_addImage != null)
+        {
+            await _addImage.Reset(true);
+        }
     }
     private void OnImageUploaded(ImgbbUploadResponse response)
     {
