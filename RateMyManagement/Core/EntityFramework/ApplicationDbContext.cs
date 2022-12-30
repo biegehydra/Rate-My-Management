@@ -14,6 +14,7 @@ namespace RateMyManagement.Core.EntityFramework
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
+            builder
         }
     }
 }
