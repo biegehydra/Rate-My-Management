@@ -54,10 +54,6 @@
         try
         {
             _currentPageCompanies = await companyService.QueryCompaniesByStartingLetter(str[0]);
-            foreach (var company in _currentPageCompanies)
-            {
-    //company.Rating = await company.GetRating(locationService);
-            }
         }
         catch(Exception exception)
         {
