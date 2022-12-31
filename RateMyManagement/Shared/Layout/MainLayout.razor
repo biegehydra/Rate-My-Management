@@ -11,7 +11,8 @@
             <div>
                 @if (_displayLogo)
                 {
-                    <h1 style="cursor: pointer" @onclick="@(() => navManager.NavigateTo("/"))">Rate My Management</h1>
+                    <h1 class="short-title" style="cursor: pointer" @onclick="@(() => navManager.NavigateTo("/"))">RMM</h1>
+                    <h1 class="long-title" style="cursor: pointer" @onclick="@(() => navManager.NavigateTo("/"))">Rate My Management</h1>
                 }
                 @if (_searchEnabled)
                 {

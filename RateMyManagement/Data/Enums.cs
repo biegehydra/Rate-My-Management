@@ -14,14 +14,12 @@
     }
     public enum ReviewType
     {
-        Null,
         Customer,
         Employee
     }
 
     public enum ManagerType
     {
-        Null,
         Employee,
         CustomerService,
         HumanResources,

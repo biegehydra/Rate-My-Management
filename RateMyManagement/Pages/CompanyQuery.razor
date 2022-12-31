@@ -1,8 +1,4 @@
 ﻿@page "/search/company/{query}"
-@inject ICompanyService companyService;
-@inject ILocationService locationService;
-@inject NavigationManager navManager;
-@layout MainLayoutWithSides
 <div class="page-container">
     @if (_loading)
     {
@@ -24,7 +20,7 @@
     }
     @foreach (var company in CompaniesQueried)
     {
-        <RadzenCard Style="cursor: pointer; width: 95%; margin-top: 15px; position: relative; display: flex; justify-content: space-between" @onclick="@(() => navManager.NavigateTo($"/company/{company.Id}"))">
+        <RadzenCard Style="cursor: pointer; width: 95%; margin-top: 15px; position: relative; display: flex; justify-content: space-between" @onclick="@(()=> NavigateToCompany(company.Id))">
             <h1 style="position: absolute; top: 10px; right: 10px;">@company.GetRating().ToString("0.00")</h1>
             <div>
                 <h1>@company.Name</h1>
@@ -34,29 +30,3 @@
         </RadzenCard>
     }
 </div>
-@code {
-    [Parameter]
-    public string? Query { get; set; }
-
-    private bool _loading;
-    public List<Company> CompaniesQueried { get; set; } = new List<Company>();
-    protected override async Task OnParametersSetAsync()
-    {
-        CompaniesQueried = new List<Company>();
-        await GetQueriedCompanies();
-    }
-
-    private async Task GetQueriedCompanies()
-    {
-        if (Query == null) return;
-        _loading = true;
-        var temp = await companyService.GetAllCompaniesAsync();
-        CompaniesQueried = temp.Where(x => x.Name.ToLower().Contains(Query.ToLower())).ToList();
-        foreach (var company in CompaniesQueried)
-        {
-            //company.Rating = await company.GetRating(locationService);
-        }
-        _loading = false;
-    }
-
-}

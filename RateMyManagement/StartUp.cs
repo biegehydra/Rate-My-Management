@@ -16,7 +16,10 @@ public class StartUp
     public static void ConfigureService(IServiceCollection services, string dbConnectionString)
     {
         services.AddDbContext<ApplicationDbContext>(options =>
-            options.UseSqlServer(dbConnectionString));
+        {
+            options.UseSqlServer(dbConnectionString);
+            options.EnableSensitiveDataLogging();
+        });
         services.AddDatabaseDeveloperPageExceptionFilter();
         services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
             .AddRoles<IdentityRole>()

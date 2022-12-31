@@ -14,7 +14,7 @@
             <RadzenContent Style="padding: 0;">@LocationReview.Content</RadzenContent>
             <hr style="height: 2px; color: black"/>
             <div style="display: flex; flex-wrap: wrap;">
-                @foreach (var attribut in LocationReview.ManagerAttributes)
+                @foreach (var attribut in LocationReview.ManagerAttributes.Split(","))
                 {
                     <RadzenChip>@attribut</RadzenChip>
                 }

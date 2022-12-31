@@ -33,13 +33,19 @@ public class SqlLocationService : ILocationService
 
     public async Task<Location> GetLocationAsync(string locationId)
     {
-        var result = await _dbContext.Locations.Include(x => x.LocatioReviews).FirstOrDefaultAsync(x => x.Id == locationId);
+        var result = await _dbContext.Locations
+            .Include(x => x.LocatioReviews)
+            .Include(x => x.Company)
+            .FirstOrDefaultAsync(x => x.Id == locationId);
         return result ?? Location.Default;
     }
 
     public async Task<List<Location>> GetLocationsAsync(IEnumerable<string> locationIds)
     {
-        return await _dbContext.Locations.Include(x => x.LocatioReviews).Where(x => locationIds.Contains(x.Id)).ToListAsync();
+        return await _dbContext.Locations
+            .Include(x => x.LocatioReviews)
+            .Include(x => x.Company)
+            .Where(x => locationIds.Contains(x.Id)).ToListAsync();
     }
 
     public async Task AddLocationReviewAsync(string locationId, LocationReview review)

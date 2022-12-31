@@ -1,22 +1,18 @@
 ﻿@page "/company/location/{Id}"
-@using ClaimTypes = RateMyManagement.Data.ClaimTypes
-@inject ILocationService locationService
-@inject ICompanyService companyService
-@inject UserManager<ApplicationUser> userManager
-@if (_company != null)
+@if (_location != null)
 {
-    <PageTitle>@(_company.Name + " " + _location.City)</PageTitle>
+    <PageTitle>@(_location.Company.Name + " " + _location.City)</PageTitle>
     <div class="d-flex flex-column align-items-center">
-        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; width: -webkit-fill-available;">
+        <div class="head">
             <div style="margin: 10px;">
                 <RadzenCard>Overall Rating: @_location.GetRating().ToString("0.00")</RadzenCard>
                 <RatingChart Ratings="@_location.LocatioReviews.Select(x => x.Stars)"></RatingChart>
             </div>
             <div class="d-flex flex-column align-items-center">
-                <img style="height: 10em; width: 10em; border-radius: 50%" src="@_company.GetLogoUrl()"/>
-                <h1 align="center">@_company.Name</h1>
-                <h3>@_company.Industry</h3>
-                <p>@_company.Description</p>
+                <img style="height: 10em; width: 10em; border-radius: 50%" src="@_location.Company.GetLogoUrl()"/>
+                <h1 align="center">@_location.Company.Name</h1>
+                <h3>@_location.Company.Industry</h3>
+                <p>@_location.Company.Description</p>
                 @if (!_editing)
                 {
                     <p>@_location.City</p>
@@ -63,59 +59,4 @@
             <LocationReviewComponent LocationReview="@review"></LocationReviewComponent>
         }
     </div>
-}
-
-@code {
-    [Parameter]
-    public string Id { get; set; }
-    private Location _location { get; set; }
-    private Company? _company { get; set; }
-    private bool _editing;
-
-    public string GetSource()
-    {
-        var test = _editing ? @"\Images\Icons\Cancel.png)" : @"\Images\Icons\Edit.png";
-        return test;
-    }
-    protected override async Task OnInitializedAsync()
-    {
-        _location = await locationService.GetLocationAsync(Id);
-        _company = await companyService.GetCompanyAsync(_location.Company.Id);
-        _location.LocatioReviews = _location.LocatioReviews.OrderByDescending(x => DateTime.Parse(x.SentDateAndTime,  CultureInfo.InvariantCulture)).ToList();
-    }
-    private async Task OnSubmitReview()
-    {
-        await OnInitializedAsync();
-    }
-    private async Task OnSaveLocationChanges(Location location)
-    {
-        await locationService.SaveLocationAsync(location);
-        _editing = !_editing;
-    }
-
-    private async Task MakeManager(ClaimsPrincipal claimsPrincipal)
-    {
-        var user = await userManager.GetUserAsync(claimsPrincipal);
-        await userManager.AddClaimAsync(user, new Claim(ClaimTypes.EditLocation.ToString(), _location.Id));
-    }
-    private void OnSortByClicked(MenuItemEventArgs args)
-    {
-        switch (args.Text)
-        {
-            case "Most Recent":
-                _location.LocatioReviews = _location.LocatioReviews.OrderByDescending(x => DateTime.Parse(x.SentDateAndTime, CultureInfo.InvariantCulture)).ToList();
-                break;
-            case "Least Recent":
-                _location.LocatioReviews = _location.LocatioReviews.OrderBy(x => DateTime.Parse(x.SentDateAndTime, CultureInfo.InvariantCulture)).ToList();
-                break;
-            case "Sender Username":
-                _location.LocatioReviews = _location.LocatioReviews.OrderBy(x => x.SenderUsername).ToList();
-                break;
-            case "Employee Name":
-                _location.LocatioReviews = _location.LocatioReviews.OrderBy(x => x.ManagerName).ToList();
-                break;
-                
-        }
-        
-    }
 }

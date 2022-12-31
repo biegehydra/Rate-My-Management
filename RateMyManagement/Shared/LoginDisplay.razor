@@ -6,7 +6,13 @@
         </form>
     </Authorized>
     <NotAuthorized>
-        <a href="Identity/Account/Register">Register</a>
-        <a href="Identity/Account/Login">Log in</a>
+        <div style="position: relative">
+            <RadzenMenu>
+                <RadzenMenuItem Icon="home" Text="Account">
+                    <RadzenMenuItem Text="Login" Path="Identity/Account/Login"></RadzenMenuItem>
+                    <RadzenMenuItem Text="Register" Path="Identity/Account/Register"></RadzenMenuItem>
+                </RadzenMenuItem>
+            </RadzenMenu>
+        </div>
     </NotAuthorized>
 </AuthorizeView>

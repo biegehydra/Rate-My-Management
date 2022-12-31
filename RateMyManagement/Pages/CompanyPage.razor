@@ -1,18 +1,12 @@
 ﻿@page "/company/{CompanyId}"
-@layout MainLayoutWithSides
-@inject ILocationService locationService;
-@inject ICompanyService companyService;
-@inject NavigationManager navManager;
-@inject UserManager<ApplicationUser> userManager
-@inject ApplicationDbContext dbContext
 @if (_company != null)
 {
     <PageTitle>@_company.Name</PageTitle>
     <div class="flex-down page-container">
-        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; width: 100%; padding: 15px;">
+        <div class="head">
             <div>
-                <RadzenCard>Overall Rating: @_companyRating</RadzenCard>
-                <RatingChart Ratings="@_companyLocations.Select(x => (int)Math.Round(x.GetRating()))"></RatingChart>
+                <RadzenCard>Overall Rating: @_company.GetRating().ToString("0.00")</RadzenCard>
+                <RatingChart Ratings="@_company.Locations.Select(x => (int)Math.Round(x.GetRating()))"></RatingChart>
             </div>
             <div style="display: flex; flex-direction: column; align-items: center;">
                 @if (!_editing)
@@ -101,115 +95,3 @@
     </div>
 }
 
-@code {
-    [Parameter]
-    public string? CompanyId { get; set; }
-    private Company _company;
-    private List<Location> _companyLocations = new List<Location>();
-    private List<Location> _queriedLocations = new List<Location>();
-    private bool _creatingLocation;
-    private bool _editing { get; set; }
-
-    private AddImage? _addImage;
-
-    private string? _companyRating { get; set; }
-    private string _query = string.Empty;
-
-    public string Query
-    {
-        get { return _query; }
-        set
-        {
-            _query = value;
-            _queriedLocations = _companyLocations.Where(x => x.Address.Contains(_query) || x.City.Contains(_query) ).ToList();
-            if (string.IsNullOrWhiteSpace(_query))
-            {
-                _queriedLocations = _companyLocations;
-            }
-        }
-    }
-    private string _locationAddress = String.Empty;
-    private string _locationCity = String.Empty;
-    protected override async Task OnInitializedAsync()
-    {
-        await GetCompanyAsync();
-        await GetCompanyLocationsAsync();
-        _queriedLocations = _companyLocations;
-        if (_companyLocations.Count == 0)
-        {
-            _companyRating = "0.00";
-        }
-        else
-        {
-            _companyRating = _companyLocations.Average(x => x.GetRating()).ToString("0.00");
-        }
-    }
-    private async Task GetCompanyAsync()
-    {
-        if (CompanyId == null) return;
-        _company = await companyService.GetCompanyAsync(CompanyId);
-    }
-    private async Task GetCompanyLocationsAsync()
-    {
-        _companyLocations.Clear();
-        //_companyLocations = await locationService.GetLocationsAsync(_company.LocationIds);
-    }
-    private async Task OnSubmitLocation()
-    {
-        if (string.IsNullOrWhiteSpace(_locationAddress) || string.IsNullOrWhiteSpace(_locationCity)) return;
-        var location = new Location()
-        {
-            Id = Guid.NewGuid().ToString(),
-            Company = _company,
-            Address = _locationAddress, 
-            City = _locationCity,
-            LocatioReviews = new()
-        };
-        await locationService.SaveLocationAsync(location);
-        _companyLocations.Add(location);
-        ResetLocation();
-    }
-    private void ResetLocation()
-    {
-        _locationAddress = string.Empty;
-        _locationCity = string.Empty;
-        _creatingLocation = false;
-    }
-    private void Navaway(string id)
-    {
-        var url = $"/company/location/{id}";
-        navManager.NavigateTo(url);
-    }
-    private async Task OnCompanyChangesSaved(Company company)
-    {
-        await companyService.SaveCompanyAsync(company);
-        _editing = !_editing;
-        if (_addImage != null)
-        {
-            await _addImage.Reset(false);
-        }
-    }
-    private async Task OnBeginEditing()
-    {
-        _editing = !_editing;
-        await Task.Delay(2);
-        if (_addImage != null)
-        {
-            _addImage.SetImage(_company.LogoUrl);
-        }
-    }
-    private async Task OnStopEditing()
-    {
-        _editing = !_editing;
-        if (_addImage != null)
-        {
-            await _addImage.Reset(true);
-        }
-    }
-    private void OnImageUploaded(ImgbbUploadResponse response)
-    {
-        _company.LogoUrl = response.data.display_url;
-        _company.LogoDeleteUrl = response.data.delete_url;
-    }
-
-}

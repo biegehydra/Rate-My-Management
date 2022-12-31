@@ -1,18 +1,12 @@
 ﻿@page "/"
-@using System.Timers
-@using System.Diagnostics
-@using Microsoft.EntityFrameworkCore
-@inject ICompanyService companyService
-@inject ILocationService locationService
-@inject ApplicationDbContext dbContext
-@inject NavigationManager navManager
-@layout MainLayoutWithSides
 <PageTitle>RateMyManagement</PageTitle>
-<div style="display: flex; flex-direction: column; align-items: center; position: relative">
-    <RadzenText TextStyle="TextStyle.H2">Rate My Management</RadzenText>
+<div class="d-flex flex-column align-items-center position-relative">
+    <RadzenText TextStyle="TextStyle.H2" TextAlign="TextAlign.Center">Rate My Management</RadzenText>
     <CompanySearch></CompanySearch>
     <RadzenText TextStyle="TextStyle.Body2" Style="margin-top:15px;">Enter a company name to get started</RadzenText>
-    <Paginiation MetaData="_pagingMetaData" SelectedPage="@OnPageSelected"></Paginiation>
+    <div class="alphabet-nav">
+        <Paginiation MetaData="_pagingMetaData" SelectedPage="@OnPageSelected"></Paginiation>
+    </div>
     @foreach (var company in _currentPageCompanies)
     {
         <RadzenCard Style="cursor: pointer; width: 95%; margin-top: 15px; position: relative; display: flex; justify-content:space-between" @onclick="@(() => navManager.NavigateTo($"/company/{company.Id}"))">
@@ -21,47 +15,12 @@
                 <h1>@company.Name</h1>
                 <h3>@company.Industry</h3>
             </div>
-            <img style="border-radius: 50%; height: 5em; width: 5em; margin-right: 5em;" src="@company.GetLogoUrl()"/>
+            <img class="circle" src="@company.GetLogoUrl()"/>
         </RadzenCard>
     }
-    <div style="position: absolute; top: 10px; right: 10px;">
+    <div class="position-fixed bottom-right">
         <AdminDiv>
             <RadzenButton Style="Background:red;" Size="ButtonSize.Small" Click="PopulateSite">Populate companies and locations</RadzenButton>
         </AdminDiv>
     </div>
 </div>
-@code
-{
-    [CascadingParameter] private MainLayout? _layout { get; set; }
-    private List<Company> _currentPageCompanies = new List<Company>();
-
-    private PagingMetaData? _pagingMetaData = new PagingMetaData()
-    {
-        CurrentPage = 0,
-        PageSize = 0, // Doesn't matter
-        TotalCount = 0, // Doesn't matter
-        TotalPages = 2
-    };
-    protected override async Task OnInitializedAsync()
-    {
-        await Task.Delay(1);
-        _layout?.DisableSearch();
-        _layout?.DisableLogo();
-    }
-
-    private async Task OnPageSelected(string str)
-    {
-        try
-        {
-            _currentPageCompanies = await companyService.QueryCompaniesByStartingLetter(str[0]);
-        }
-        catch(Exception exception)
-        {
-            var e = exception;
-        }
-    }
-    private async Task PopulateSite()
-    {
-    //TODO add this functionality
-    }
-}

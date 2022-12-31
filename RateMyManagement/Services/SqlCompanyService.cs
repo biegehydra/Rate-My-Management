@@ -37,28 +37,37 @@ public class SqlCompanyService : ICompanyService
     public async Task<Company> GetCompanyAsync(string companyId)
     {
         Company? company;
-        await using (_dbContext)
-        {
-            company = await _dbContext.Companies.Include(c => c.Locations).FirstOrDefaultAsync(x => x.Id == companyId);
-        }
+        company = await _dbContext.Companies
+            .Include(c => c.Locations)
+            .ThenInclude(x => x.LocatioReviews)
+            .FirstOrDefaultAsync(x => x.Id == companyId);
         return company ?? Company.Default;
     }
 
     public async Task<List<Company>> GetCompaniesAsync(IEnumerable<string> companyIds)
     {
-        var result = await _dbContext.Companies.Include(c => c.Locations).Where(x => companyIds.Contains(x.Id)).ToListAsync();
+        var result = await _dbContext.Companies
+            .Include(c => c.Locations)
+            .ThenInclude(x => x.LocatioReviews)
+            .Where(x => companyIds.Contains(x.Id))
+            .ToListAsync();
         return result ?? new List<Company>();
     }
 
     public async Task<List<Company>> GetAllCompaniesAsync()
     {
-        return await _dbContext.Companies.Include(c => c.Locations).ToListAsync();
+        return await _dbContext.Companies
+            .Include(c => c.Locations)
+            .ThenInclude(x => x.LocatioReviews)
+            .ToListAsync();
     }
 
     public async Task<List<Company>> QueryCompaniesByStartingLetter(char letter)
     {
         return await _dbContext.Companies
             .Include(c => c.Locations)
-            .Where(x => EF.Functions.Like(x.Name, letter + "%")).ToListAsync();
+            .ThenInclude(x => x.LocatioReviews)
+            .Where(x => EF.Functions.Like(x.Name, letter + "%"))
+            .ToListAsync();
     }
 }

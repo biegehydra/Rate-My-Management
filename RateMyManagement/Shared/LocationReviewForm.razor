@@ -128,6 +128,7 @@
     {
         if (_claimsPrincipal == null || _claimsPrincipal.Identity == null || _claimsPrincipal.Identity.Name == null) return;
         LocationReview.SenderUsername = _claimsPrincipal.Identity.Name;
+        LocationReview.Id = Guid.NewGuid().ToString();
         await locationService.AddLocationReviewAsync(LocationId, LocationReview);
         ResetForm();
         _creatingReview = false;
