@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using RateMyManagement.Core.EntityFramework;
 using RateMyManagement.Shared.Authorization;
 
-namespace RateMyManagement.Core.DatabaseConfiguration
+namespace RateMyManagement.Core.EntityFramework.DatabaseConfiguration
 {
     public class UserConfiguration : IEntityTypeConfiguration<ApplicationUser>
     {

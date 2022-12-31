@@ -80,7 +80,7 @@
     protected override async Task OnInitializedAsync()
     {
         _location = await locationService.GetLocationAsync(Id);
-        _company = await companyService.GetCompanyAsync(_location.CompanyId);
+        _company = await companyService.GetCompanyAsync(_location.Company.Id);
         _location.LocatioReviews = _location.LocatioReviews.OrderByDescending(x => DateTime.Parse(x.SentDateAndTime,  CultureInfo.InvariantCulture)).ToList();
     }
     private async Task OnSubmitReview()

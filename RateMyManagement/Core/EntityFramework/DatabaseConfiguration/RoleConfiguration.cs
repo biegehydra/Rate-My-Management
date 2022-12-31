@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore;
 
-namespace RateMyManagement.Core.DatabaseConfiguration
+namespace RateMyManagement.Core.EntityFramework.DatabaseConfiguration
 {
     public class RoleConfiguration : IEntityTypeConfiguration<IdentityRole>
     {

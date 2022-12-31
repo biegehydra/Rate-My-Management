@@ -70,14 +70,14 @@
         set
         {
             _multiplateAttributes = value;
-            List<ManagerAttribute> temp = new List<ManagerAttribute>();
+            string temp = string.Empty;
             foreach (var str in value)
             {
-                ManagerAttribute val;
-                if (str.MatchesEnumItem(out val))
-                {
-                    temp.Add(val);
-                }
+                temp += str + ",";
+            }
+            if (temp.Length > 0)
+            {
+                temp.TrimEnd(',');
             }
             LocationReview.ManagerAttributes = temp;
         }
@@ -106,7 +106,7 @@
     }
     private void OnReviewTypeChange(int args)
     {
-        LocationReview.Type = args == 1 ? ReviewType.Employee : ReviewType.Customer;
+        LocationReview.Type = args == 1 ? ReviewType.Employee.ToString() : ReviewType.Customer.ToString();
     }
     private void OnManagerTypeSelectionChange(object args)
     {
@@ -114,7 +114,7 @@
         ManagerType managerType;
         if (asString != null && asString.MatchesEnumItem(out managerType))
         {
-            LocationReview.ManagerType = managerType;
+            LocationReview.ManagerType = managerType.ToString();
         }
 
     }

@@ -27,8 +27,8 @@ public class StartUp
 
 
         services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<ApplicationUser>>();
-        services.AddSingleton<ICompanyService>(x => new MongoCompanyService("RateMyManagement", "Company", "Location"));
-        services.AddSingleton<ILocationService>(x => new MongoLocationService("RateMyManagement", "Company", "Location"));
+        services.AddScoped<ICompanyService, SqlCompanyService>();
+        services.AddScoped<ILocationService, SqlLocationService>();
         services.AddSingleton<IImageService, ImgbbService>();
         services.AddSingleton<IAuthorizationHandler, LocationManagerHandler>();
         services.AddSingleton<IAuthorizationHandler, CompanyManagerHandler>();

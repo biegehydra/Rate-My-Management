@@ -1,7 +1,7 @@
 ﻿<RadzenCard Style="padding: 10px 10px; margin:10px; width: 95%;">
     <div class="position-relative d-flex flex-row w-100">
         <div style=" border-right: 1px solid black; padding-right: 10px; display: flex; flex-direction: column; align-items: center; width:15%">
-            <RadzenText TextAlign="TextAlign.Center">Position: <span style="white-space: nowrap">@LocationReview.ManagerType.ToStringCorrected()</span></RadzenText>
+            <RadzenText TextAlign="TextAlign.Center">Position: <span style="white-space: nowrap">@LocationReview.ManagerType</span></RadzenText>
             <RadzenText Style="margin-top: 10px; margin-bottom: 10px;" TextAlign="TextAlign.Center">Manager: <br/> @LocationReview.ManagerName</RadzenText>
             <h1><b>@LocationReview.Stars</b></h1>
         </div>
@@ -16,10 +16,10 @@
             <div style="display: flex; flex-wrap: wrap;">
                 @foreach (var attribut in LocationReview.ManagerAttributes)
                 {
-                    <RadzenChip>@attribut.ToStringCorrected()</RadzenChip>
+                    <RadzenChip>@attribut</RadzenChip>
                 }
             </div>
-            @if (LocationReview.Type == ReviewType.Employee)
+            @if (LocationReview.Type == ReviewType.Employee.ToString())
             {
                 <h6 style="position: absolute; top: 5px; right: 5px; color: blue; background-color: black; padding: 3px;">Employee Review</h6>
             }

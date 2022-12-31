@@ -13,7 +13,7 @@ namespace RateMyManagement.Core.EntityFramework.Authorization
                        claim => claim.Type == ClaimTypes.EditLocation.ToString()
                                 && claim.Value == location.Id || context.User.HasClaim(
                                     claim => claim.Type == ClaimTypes.EditCompany.ToString()
-                                             && claim.Value == location.CompanyId)))
+                                             && claim.Value == location.Company.Id)))
                 {
                     context.Succeed(requirement);
                 }

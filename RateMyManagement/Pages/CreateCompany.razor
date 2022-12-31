@@ -25,6 +25,10 @@
             <div>
                 <RadzenButton ButtonType="ButtonType.Submit" Click="CreateCompanyAsync">Submit</RadzenButton>
             </div>
+            @if (_error)
+            {
+                <p style="color: red"</p>
+            }
         </RadzenTemplateForm>
     </RadzenCard>
 </div>
@@ -38,7 +42,8 @@
     string _companyLogoUrl { get; set; } = string.Empty;
     string _companyLogoDeleteUrl { get; set; } = string.Empty;
     public List<Company> CompaniesQueried { get; set; } = new List<Company>();
-
+    string _errorMessage;
+    bool _error;
     private async Task CreateCompanyAsync()
     {
         if (string.IsNullOrEmpty(_companyName) || string.IsNullOrEmpty(_companyDescription) ||
@@ -50,6 +55,7 @@
         {
             var company = new Company()
             {
+                Id = Guid.NewGuid().ToString(),
                 Name = _companyName,
                 Industry = _companyIndustry,
                 Description = _companyDescription,
@@ -61,8 +67,18 @@
         }
         catch (Exception e)
         {
-            var test = e;
+            await DisplayError(e, 5000);
         }
+    }
+
+    private async Task DisplayError(Exception e, int lengthMili)
+    {
+        _error = true;
+        _errorMessage = "Something went wrong: " + e.Message;
+        StateHasChanged();
+        await Task.Delay(lengthMili);
+        _error = false;
+        StateHasChanged();
     }
 
     private void ResetForm()

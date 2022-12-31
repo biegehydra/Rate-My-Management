@@ -7,20 +7,19 @@ namespace RateMyManagement.Data
     {
         public static readonly Location Default = new Location()
         {
-            Id = ObjectId.GenerateNewId().ToString(),
-
-    };
-        [BsonRepresentation(BsonType.ObjectId)]
-        public string Id { get; set; } = ObjectId.GenerateNewId().ToString();
-        public string CompanyId { get; set; }
+            Id = Guid.NewGuid().ToString(),
+            City = "Default City",
+            Address = "Default Address",
+            LocatioReviews = new List<LocationReview>(),
+        };
+        public string Id { get; set; }
+        public Company Company { get; set; }
         public string City { get; set; }
         public string Address { get; set; }
-
+        public List<LocationReview> LocatioReviews { get; set; } = new();
         public float GetRating()
         {
-            if (LocatioReviews.Count == 0) return 0;
-            return (float)LocatioReviews.Select(x => x.Stars).Average();
+            return LocatioReviews.Count == 0 ? 0f : (float) LocatioReviews.Average(x => x.Stars);
         }
-        public List<LocationReview> LocatioReviews { get; set; } = new List<LocationReview>();
     }
 }

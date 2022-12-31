@@ -4,6 +4,7 @@
 @inject ICompanyService companyService;
 @inject NavigationManager navManager;
 @inject UserManager<ApplicationUser> userManager
+@inject ApplicationDbContext dbContext
 @if (_company != null)
 {
     <PageTitle>@_company.Name</PageTitle>
@@ -151,20 +152,20 @@
     private async Task GetCompanyLocationsAsync()
     {
         _companyLocations.Clear();
-        _companyLocations = await locationService.GetLocationsAsync(_company.LocationIds);
+        //_companyLocations = await locationService.GetLocationsAsync(_company.LocationIds);
     }
     private async Task OnSubmitLocation()
     {
         if (string.IsNullOrWhiteSpace(_locationAddress) || string.IsNullOrWhiteSpace(_locationCity)) return;
         var location = new Location()
         {
-            CompanyId = _company.Id,
+            Id = Guid.NewGuid().ToString(),
+            Company = _company,
             Address = _locationAddress, 
-            City = _locationCity
+            City = _locationCity,
+            LocatioReviews = new()
         };
         await locationService.SaveLocationAsync(location);
-        await companyService.AddLocationIdToCompanyAsync(_company.Id, location.Id);
-        _company.LocationIds.Add(location.Id);
         _companyLocations.Add(location);
         ResetLocation();
     }

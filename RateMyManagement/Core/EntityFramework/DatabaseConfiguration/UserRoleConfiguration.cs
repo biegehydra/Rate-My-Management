@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore;
 using RateMyManagement.Core.EntityFramework;
 
-namespace RateMyManagement.Core.DatabaseConfiguration
+namespace RateMyManagement.Core.EntityFramework.DatabaseConfiguration
 {
     public class UserRoleConfiguration : IEntityTypeConfiguration<IdentityUserRole<string>>
     {

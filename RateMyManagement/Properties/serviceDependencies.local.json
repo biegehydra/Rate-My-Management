@@ -2,9 +2,10 @@
   "dependencies": {
     "mssql1": {
       "secretStore": "LocalSecretsFile",
-      "resourceId": "/subscriptions/[parameters('subscriptionId')]/resourceGroups/[parameters('resourceGroupName')]/providers/Microsoft.Sql/servers/ratemymanagementdbserver/databases/RateMyManagement_db",
+      "resourceId": "/subscriptions/[parameters('subscriptionId')]/resourceGroups/[parameters('resourceGroupName')]/providers/Microsoft.Sql/servers/ratemymanagementdbserver/databases/RateMyManagement_db2",
       "type": "mssql.azure",
-      "connectionId": "ConnectionStrings:Azure"
+      "connectionId": "ConnectionStrings:Azure",
+      "dynamicId": null
     }
   }
 }

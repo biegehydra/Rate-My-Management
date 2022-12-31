@@ -1,8 +1,10 @@
 ﻿@page "/"
 @using System.Timers
 @using System.Diagnostics
+@using Microsoft.EntityFrameworkCore
 @inject ICompanyService companyService
 @inject ILocationService locationService
+@inject ApplicationDbContext dbContext
 @inject NavigationManager navManager
 @layout MainLayoutWithSides
 <PageTitle>RateMyManagement</PageTitle>
@@ -14,7 +16,7 @@
     @foreach (var company in _currentPageCompanies)
     {
         <RadzenCard Style="cursor: pointer; width: 95%; margin-top: 15px; position: relative; display: flex; justify-content:space-between" @onclick="@(() => navManager.NavigateTo($"/company/{company.Id}"))">
-            <h1 style="position: absolute; top: 10px; right: 10px;">@company.Rating.ToString("0.00")</h1>
+            <h1 style="position: absolute; top: 10px; right: 10px;">@company.GetRating().ToString("0.00")</h1>
             <div>
                 <h1>@company.Name</h1>
                 <h3>@company.Industry</h3>
@@ -38,8 +40,7 @@
         CurrentPage = 0,
         PageSize = 0, // Doesn't matter
         TotalCount = 0, // Doesn't matter
-        TotalPages = 26
-
+        TotalPages = 2
     };
     protected override async Task OnInitializedAsync()
     {
@@ -50,17 +51,21 @@
 
     private async Task OnPageSelected(string str)
     {
-        _currentPageCompanies = await companyService.QueryCompaniesByStartingLetter(str[0]);
-        foreach (var company in _currentPageCompanies)
+        try
         {
-            company.Rating = await company.GetRating(locationService);
+            _currentPageCompanies = await companyService.QueryCompaniesByStartingLetter(str[0]);
+            foreach (var company in _currentPageCompanies)
+            {
+    //company.Rating = await company.GetRating(locationService);
+            }
+        }
+        catch(Exception exception)
+        {
+            var e = exception;
         }
     }
     private async Task PopulateSite()
     {
-        await BogusWrapper.GenerateFakeCompanies(companyService, 100);
-        await BogusWrapper.GenerateFakeLocations(companyService, locationService, 5, 30);
-        await BogusWrapper.GenerateFakeLocationReviews(locationService, companyService, 10, 20);
-        Console.WriteLine("Created 100 fake companies");
+        //TODO add this functionality
     }
 }
