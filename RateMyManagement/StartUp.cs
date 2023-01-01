@@ -18,7 +18,6 @@ public class StartUp
         services.AddDbContext<ApplicationDbContext>(options =>
         {
             options.UseSqlServer(dbConnectionString);
-            options.EnableSensitiveDataLogging();
         });
         services.AddDatabaseDeveloperPageExceptionFilter();
         services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)

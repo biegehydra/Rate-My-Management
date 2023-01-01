@@ -47,20 +47,19 @@ namespace RateMyManagement.Pages
             try
             {
                 var companies = BogusWrapper.GenerateFakeCompanies(100);
-                await dbContext.Companies.AddRangeAsync(companies);
-                await dbContext.SaveChangesAsync();
                 foreach (var company in companies)
                 {
-                    var locations = BogusWrapper.GenerateFakeLocations(company, 20);
-                    await dbContext.Locations.AddRangeAsync(locations);
-                    await dbContext.SaveChangesAsync();
-                    foreach (var location in locations)
+                    var locations = BogusWrapper.GenerateFakeLocations(company, 20).ToList();
+                    company.Locations = locations;
+                    foreach (var location in company.Locations)
                     {
-                        var reviews = BogusWrapper.GenerateFakeLocationReviews(location, 20);
-                        await dbContext.LocationReviews.AddRangeAsync(reviews);
-                        await dbContext.SaveChangesAsync();
+                        var reviews = BogusWrapper.GenerateFakeLocationReviews(location, 20).ToList();
+                        location.LocatioReviews = reviews;
                     }
                 }
+
+                await dbContext.Companies.AddRangeAsync(companies);
+                await dbContext.SaveChangesAsync();
             }
             catch (Exception e)
             {
