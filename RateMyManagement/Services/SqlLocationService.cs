@@ -24,11 +24,13 @@ public class SqlLocationService : ILocationService
         {
             await _dbContext.Locations.AddAsync(location);
         }
+        await _dbContext.SaveChangesAsync();
     }
 
     public async Task CreateLocationsAsync(IEnumerable<Location> locations)
     {
         await _dbContext.Locations.AddRangeAsync(locations);
+        await _dbContext.SaveChangesAsync();
     }
 
     public async Task<Location> GetLocationAsync(string locationId)
@@ -51,10 +53,12 @@ public class SqlLocationService : ILocationService
     public async Task AddLocationReviewAsync(string locationId, LocationReview review)
     {
         await _dbContext.LocationReviews.AddAsync(review);
+        await _dbContext.SaveChangesAsync();
     }
 
     public async Task AddLocationReviewsAsync(string locationId, IEnumerable<LocationReview> reviews)
     {
         await _dbContext.LocationReviews.AddRangeAsync(reviews);
+        await _dbContext.SaveChangesAsync();
     }
 }

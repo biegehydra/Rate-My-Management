@@ -1,7 +1,4 @@
-﻿using MongoDB.Bson;
-using MongoDB.Bson.Serialization.Attributes;
-
-namespace RateMyManagement.Data
+﻿namespace RateMyManagement.Data
 {
     public class LocationReview
     {

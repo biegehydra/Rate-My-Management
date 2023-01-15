@@ -1,11 +1,4 @@
-﻿using Bogus.DataSets;
-using MongoDB.Bson;
-using MongoDB.Bson.Serialization.Attributes;
-using MongoDB.Driver;
-using RateMyManagement.IServices;
-using RateMyManagement.Data;
-
-namespace RateMyManagement.Data
+﻿namespace RateMyManagement.Data
 {
     public class Company
     {
